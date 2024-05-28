@@ -1,14 +1,14 @@
 {
   "configurations": [
     {
-      "name": "macos-clang-arm64",
+      "name": "windows-clang-x64",
       "includePath": [
         "${workspaceFolder}/**"
       ],
-      "compilerPath": "/usr/bin/clang",
+      "compilerPath": "C:/Program Files/JetBrains/CLion 2023.3.4/bin/clang",
       "cStandard": "${default}",
       "cppStandard": "${default}",
-      "intelliSenseMode": "macos-clang-arm64",
+      "intelliSenseMode": "windows-clang-x64",
       "compilerArgs": [
         ""
       ]
