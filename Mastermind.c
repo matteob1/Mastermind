@@ -81,7 +81,7 @@ int main()
 
   // Usa fgets per leggere la stringa, inclusi gli spazi
   if (fgets(id_utente, sizeof(id_utente), stdin) != NULL)
-  // Il terzo parametro di fgets in questo caso è 'stdin', che indica che l'input proviene dallo standard input, cioè dalla tastiera.
+  // Il terzo parametro di fgets in questo caso è 'stdin' e sta ad indicare che l'input proviene dallo standard input, cioè dalla tastiera.
   {
     // Rimuove il newline finale, se presente
     id_utente[strcspn(id_utente, "\n")] = '\0'; /* la funzione strcspn scansiona 
