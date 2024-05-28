@@ -60,90 +60,121 @@
 #define ARANCIONE 6
 #define NERO 7
 #define BIANCO 8
+#define LUNGHEZZA_ID 11
 
 typedef struct struttura_giocatore
 {
-  char id[11];
+  char id[LUNGHEZZA_ID];
   int partite_giocate;
   int partite_vinte;
   int punti
-  
+
 } giocatore;
 
-
-
-int strcasecmp(const char *a, const char *b) { //funzione che dati due puntatori a costanti a e b li confronta in maniera non case sensitive
-    while (*a && *b) { //Il ciclo while (*a && *b) continua finché entrambe le stringhe non raggiungono il terminatore di stringa ('\0') 
-        if (tolower((unsigned char)*a) != tolower((unsigned char)*b)) {  //con le funzioni tolower porto i caratteri in minuscolo e se sono diversi (hanno un valore ascii diverso)
-            return tolower((unsigned char)*a) - tolower((unsigned char)*b);// restituisco il valore della loro differenza
-        }
-        a++; //carattere successivo di a (incremento del puntatore)
-        b++; //carattere successivo di b (incremento del puntatore)
+int strcasecmp(const char *a, const char *b)
+{ // funzione che dati due puntatori a costanti a e b li confronta in maniera non case sensitive
+  while (*a && *b)
+  { // Il ciclo while (*a && *b) continua finché entrambe le stringhe non raggiungono il terminatore di stringa ('\0')
+    if (tolower((unsigned char)*a) != tolower((unsigned char)*b))
+    {                                                                 // con le funzioni tolower porto i caratteri in minuscolo e se sono diversi (hanno un valore ascii diverso)
+      return tolower((unsigned char)*a) - tolower((unsigned char)*b); // restituisco il valore della loro differenza
     }
-    return tolower((unsigned char)*a) - tolower((unsigned char)*b); // restituisco il valore della loro differenza (se uguali 0)
+    a++; // carattere successivo di a (incremento del puntatore)
+    b++; // carattere successivo di b (incremento del puntatore)
+  }
+  return tolower((unsigned char)*a) - tolower((unsigned char)*b); // restituisco il valore della loro differenza (se uguali 0)
 }
 
-
-void verifica_id (giocatore player, char id [11], char nomefile[]){
+void verifica_id(giocatore player, char id[11], char nomefile[])
+{
 
   FILE *fp;
-  char id_tmp [11];
-  fp = fopen(nomefile,"r");//apertura file in modalità lettura
-   if (fp == NULL) {
-		printf("errore apertura file \n");
-		exit(1);
-	}
-     // Leggi il file blocco per blocco
-    while (fscanf(fp, "id= %10s\n", id_tmp) == 1 && !feof(fp)) { // legge finchè non trova un campo id e finchè non trova il campo eof (end of file)
-        if (strcasecmp(id, id_tmp) == 0) { //chiamo la funzione di confronto non case sensitive, se il valore di ritorno è 0 allora leggo e salvo dati utente
-            // Trovato l'utente, leggi le informazioni
-            strcpy(player.id,id_tmp); // siccome non è possibile passare direttamente l'array id_tmp all'id del player lo copiamo con strcpy
-            fscanf(fp, "games-played= %d\n", &player.partite_giocate);
-            fscanf(fp, "games-won= %d\n", &player.partite_vinte);
-            fscanf(fp, "points= %d\n", &player.punti);
-            fclose(fp);
-            printf("Utente trovato, sono stati recuperati i dati delle sessioni precedenti\n");
-
-        } else {
-            // Salta il blocco di 3 righe e il separatore "."
-            fscanf(fp, "games-played= %*d\n");  // nella fscanf il "*"" indica che vuoi saltare il valore letto e non assegnarlo a nessuna variabile.
-            fscanf(fp, "games-won= %*d\n");
-            fscanf(fp, "points= %*d\n");
-            while (fgetc(fp) != '.' && !feof(fp)); 
-            fgetc(fp); // Legge il carattere '\n' dopo il '.'
-        }
-    }
-    fclose(fp);
-
-    // arrivati a questo punto vuol dire che l'utente non esiste e bisogna crearlo
-    char consenso;
-    printf("L'id utente da te inserito non è presente nella memoria.\n Vuoi creare un nuovo profilo?\n y/n");
-    if(getc(consenso)== 'y'){
-      fp=fopen(nomefile,"a"); //apertura file in modalità append
-      strcpy(player.id,id);
-      fprintf("id= %10s\n",id);
-      player.partite_giocate, player.partite_vinte, player.punti = 0;
-      fprintf("games-played= %d\n",0);
-      fprintf("games-won= %d\n",0);
-      fprintf("points= %d\n",0);
-      fprintf(".\n");
+  char id_tmp[LUNGHEZZA_ID];
+  fp = fopen(nomefile, "r"); // apertura file in modalità lettura
+  if (fp == NULL)
+  {
+    printf("errore apertura file \n");
+    exit(1);
+  }
+  // Leggi il file blocco per blocco
+  while (fscanf(fp, "id= %10s\n", id_tmp) == 1 && !feof(fp))
+  { // legge finchè non trova un campo id e finchè non trova il campo eof (end of file)
+    if (strcasecmp(id, id_tmp) == 0)
+    { // chiamo la funzione di confronto non case sensitive, se il valore di ritorno è 0 allora leggo e salvo dati utente
+      // Trovato l'utente, leggi le informazioni
+      strcpy(player.id, id_tmp); // siccome non è possibile passare direttamente l'array id_tmp all'id del player lo copiamo con strcpy
+      fscanf(fp, "games-played= %d\n", &player.partite_giocate);
+      fscanf(fp, "games-won= %d\n", &player.partite_vinte);
+      fscanf(fp, "points= %d\n", &player.punti);
       fclose(fp);
-      system(clear);
-      printf("Il tuo nuovo profilo utente è stato creato correttamente!!");
+      printf("Utente trovato, sono stati recuperati i dati delle sessioni precedenti\n");
     }
-    else {
-      system(clear);
-      printf("Alla prossima!!");
-      exit(1);
+    else
+    {
+      // Salta il blocco di 3 righe e il separatore "."
+      fscanf(fp, "games-played= %*d\n"); // nella fscanf il "*"" indica che vuoi saltare il valore letto e non assegnarlo a nessuna variabile.
+      fscanf(fp, "games-won= %*d\n");
+      fscanf(fp, "points= %*d\n");
+      while (fgetc(fp) != '.' && !feof(fp))
+        ;
+      fgetc(fp); // Legge il carattere '\n' dopo il '.'
     }
+  }
+  fclose(fp);
+
+  // arrivati a questo punto vuol dire che l'utente non esiste e bisogna crearlo
+  char consenso;
+  printf("L'id utente da te inserito non è presente nella memoria.\n Vuoi creare un nuovo profilo?\n y/n");
+  if (getc(consenso) == 'y')
+  {
+    fp = fopen(nomefile, "a"); // apertura file in modalità append
+    strcpy(player.id, id);
+    fprintf("id= %10s\n", id);
+    player.partite_giocate, player.partite_vinte, player.punti = 0;
+    fprintf("games-played= %d\n", 0);
+    fprintf("games-won= %d\n", 0);
+    fprintf("points= %d\n", 0);
+    fprintf(".\n");
+    fclose(fp);
+    system("clear");
+    printf("Il tuo nuovo profilo utente è stato creato correttamente!!");
+  }
+  else
+  {
+    system("clear");
+    printf("Alla prossima!!");
+    exit(1);
+  }
 }
 
+int menu()
+{
+  int scelta;
+  printf("****** BENVENUTO IN MASTERMIND ******\n\n");
+  printf("[1] INIZIA UNA NUOVA PARTITA\n");
+  printf("[2] REGOLE DEL GIOCO\n");
+  printf("[3] STORICO DEL GIOCATORE\n");
+  printf("[0] ESCI DAL GIOCO\n");
+  printf("\n Scelta: ");
 
+  scanf("%d", &scelta);
+
+  while (scleta < 0 || scelta > 3)
+  {
+    printf("SCELTA NON VALIDA RIPROVARE!\n");
+    printf("\n Scelta: ");
+    getchar();
+    scanf("%d", &scelta);
+  }
+
+  return scelta;
+}
 
 int main()
 {
+  system("clear");
   giocatore player;
-  char id_utente[11]; // Buffer per 10 caratteri + terminatore nullo (\0) che viene aggiunto automaticamente alla fine dello scanf
+  char id_utente[LUNGHEZZA_ID]; // Buffer per 10 caratteri + terminatore nullo (\0) che viene aggiunto automaticamente alla fine dello scanf
   printf("****** BENVENUTO IN MASTERMIND ******\n INSERISCI IL TUO ID UTENTE:\n");
 
   // Usa fgets per leggere la stringa, inclusi gli spazi
@@ -151,13 +182,52 @@ int main()
   // Il terzo parametro di fgets in questo caso è 'stdin' e sta ad indicare che l'input proviene dallo standard input, cioè dalla tastiera.
   {
     // Rimuove il newline finale, se presente
-    id_utente[strcspn(id_utente, "\n")] = '\0'; /* la funzione strcspn scansiona 
-    la stringa passata nel primo parametro fino a quando non trova corrispondenza con almeno uno dei caratteri contenuti nella stringa passata 
+    id_utente[strcspn(id_utente, "\n")] = '\0'; /* la funzione strcspn scansiona
+    la stringa passata nel primo parametro fino a quando non trova corrispondenza con almeno uno dei caratteri contenuti nella stringa passata
     come secondo parametro ("\n"). Ha come valore di ritorno il contatore di posizioni analizzate a partire da zero.
     Quindi abbiamo preso l'elemento dell'array "id_utente" nella posizione del carattere \n (se presente) e lo sostituiamo con il carattere nullo*/
   }
-  
-  /*printf("Stringa letta: '%s'\n", id_utente);*/
 
+  /*printf("Stringa letta: '%s'\n", id_utente);*/
+  while (1)
+  {
+    scelta = menu();
+
+    switch (scelta)
+    {
+    case 0:
+      system("clear");
+      exit(0);
+      break;
+
+    case 1:
+      //partita
+        break;
+
+      case 2:
+        system("clear");
+        printf("Regole del gioco Mastermind:\n
+              Mastermind è un gioco di decodifica in cui un giocatore (il codificatore) crea un codice segreto,\n
+              e l'altro giocatore (il decodificatore) cerca di indovinarlo entro un certo numero di tentativi.\n
+              \n
+              1. Il codificatore crea un codice segreto di lunghezza fissa, composto da una sequenza di elementi.\n
+                Gli elementi possono essere colori, lettere o numeri e possono ripetersi.\n
+              \n
+              2. Il decodificatore fa una serie di tentativi per cercare di indovinare il codice segreto.\n
+                Ogni tentativo è una sequenza della stessa lunghezza del codice segreto.\n
+              \n
+              3. Dopo ogni tentativo, il codificatore fornisce un feedback sotto forma di due numeri:\n
+                - Punteggi neri: indicano quanti elementi del tentativo sono corretti sia per valore che per posizione.\n
+                - Punteggi bianchi: indicano quanti elementi del tentativo sono corretti per valore ma non per posizione.\n
+              \n
+              4. Il gioco continua finché il decodificatore non indovina esattamente il codice segreto o finché non esaurisce\n
+                 i tentativi a disposizione.\n");
+        break;
+      
+      case 3:
+        //storico del giocatore
+        break;
+    }
+  }
   return 0;
 }
