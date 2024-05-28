@@ -201,7 +201,7 @@ int main()
       break;
 
     case 1:
-      //partita
+      //inizia nuova partita
         break;
 
       case 2:
