@@ -60,6 +60,19 @@
 #define NERO 7
 #define BIANCO 8
 
+typedef struct struttura_giocatore
+{
+  char id[11];
+  int partite_giocate;
+  int partite_vinte;
+  int punti
+  
+} giocatore;
+
+int verifica_id (char id [11], char nome_file[]);
+
+
+
 int main()
 {
 
@@ -71,9 +84,13 @@ int main()
   // Il terzo parametro di fgets in questo caso è 'stdin', che indica che l'input proviene dallo standard input, cioè dalla tastiera.
   {
     // Rimuove il newline finale, se presente
-    id_utente[strcspn(id_utente, "\n")] = '\0';
+    id_utente[strcspn(id_utente, "\n")] = '\0'; /* la funzione strcspn scansiona 
+    la stringa passata nel primo parametro fino a quando non trova corrispondenza con almeno uno dei caratteri contenuti nella stringa passata 
+    come secondo parametro ("\n"). Ha come valore di ritorno il contatore di posizioni analizzate a partire da zero.
+    Quindi abbiamo preso l'elemento dell'array "id_utente" nella posizione del carattere \n (se presente) e lo sostituiamo con il carattere nullo*/
   }
 
-  printf("Stringa letta: '%s'\n", id_utente);
+  /*printf("Stringa letta: '%s'\n", id_utente);*/
+
   return 0;
 }
