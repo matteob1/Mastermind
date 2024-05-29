@@ -74,28 +74,26 @@ typedef struct struttura_giocatore
   int partite_vinte;
   int punti;
   int tutorial;
-
 } giocatore;
 
 void clear_input_buffer()
 { // semplice funzione che serve per ipulire il buffer
   int ch;
   while ((ch = getchar()) != '\n' && ch != EOF)
-    ;
 }
 
-int strcasecmp(const char *a, const char *b)
-{ // funzione che dati due puntatori a costanti a e b li confronta in maniera non case sensitive
+int strcasecmp(const char *a, const char *b) // la funzione è da rifare
+{ 
   while (*a && *b)
-  { // Il ciclo while (*a && *b) continua finché entrambe le stringhe non raggiungono il terminatore di stringa ('\0')
+  { 
     if (tolower((unsigned char)*a) != tolower((unsigned char)*b))
-    {                                                                 // con le funzioni tolower porto i caratteri in minuscolo e se sono diversi (hanno un valore ascii diverso)
-      return tolower((unsigned char)*a) - tolower((unsigned char)*b); // restituisco il valore della loro differenza
+    {                                                                 
+      return tolower((unsigned char)*a) - tolower((unsigned char)*b); 
     }
-    a++; // carattere successivo di a (incremento del puntatore)
-    b++; // carattere successivo di b (incremento del puntatore)
+    a++;
+    b++;
   }
-  return tolower((unsigned char)*a) - tolower((unsigned char)*b); // restituisco il valore della loro differenza (se uguali 0)
+  return tolower((unsigned char)*a) - tolower((unsigned char)*b); 
 }
 
 void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se ritorna 1 l'utente esiste già invece se ritorna 2 è stato creato un nuovo account
@@ -195,8 +193,7 @@ int settings_partita(int *lunghezza_codice, int *difficoltà, struct giocatore *
 
   if (consenso == 'y')
   {
-    clear_input_buffer();
-    // ancora player.tutorial vale 1 dovrà essere portato a 0 dalla funzione per vedere le regole
+    clear_input_buffer();  // ancora player.tutorial vale 1 dovrà essere portato a 0 dalla funzione per vedere le regole
     return 2;
   }
 
@@ -286,6 +283,7 @@ int main()
   }
 
   /*printf("Stringa letta: '%s'\n", id_utente);*/
+
   clear_input_buffer();
   verifica_id(player, id_utente, "data.txt");
 
