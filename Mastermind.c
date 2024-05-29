@@ -303,29 +303,20 @@ int main()
         break;
 
       case 1:
-      clear_input_buffer();
-
+        clear_input_buffer();
+        int settings= settings_partita(&lunghezza_codice,&difficoltà,player);
+        if(settings == 2){
+          //funzione che chiama la lettura delle regole ed imposta tutorial a 0
+        }
+        if(settings == 1){
+          //funzione di gioco
+        }
         break;
 
       case 2:
         clear_input_buffer();
         system("clear");
-        printf("Regole del gioco Mastermind:\n
-              Mastermind è un gioco di decodifica in cui un giocatore (il codificatore) crea un codice segreto,\n
-              e l'altro giocatore (il decodificatore) cerca di indovinarlo entro un certo numero di tentativi.\n
-              \n
-              1. Il codificatore crea un codice segreto di lunghezza fissa, composto da una sequenza di elementi.\n
-                Gli elementi possono essere colori, lettere o numeri e possono ripetersi.\n
-              \n
-              2. Il decodificatore fa una serie di tentativi per cercare di indovinare il codice segreto.\n
-                Ogni tentativo è una sequenza della stessa lunghezza del codice segreto.\n
-              \n
-              3. Dopo ogni tentativo, il codificatore fornisce un feedback sotto forma di due numeri:\n
-                - Punteggi neri: indicano quanti elementi del tentativo sono corretti sia per valore che per posizione.\n
-                - Punteggi bianchi: indicano quanti elementi del tentativo sono corretti per valore ma non per posizione.\n
-              \n
-              4. Il gioco continua finché il decodificatore non indovina esattamente il codice segreto o finché non esaurisce\n
-                 i tentativi a disposizione.\n");
+        //funzione che chiama la lettura delle regole ed imposta tutorial a 0
         break;
       
       case 3:
