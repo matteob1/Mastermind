@@ -101,7 +101,7 @@ int strcasecmp(const char *a, const char *b)
   return tolower((unsigned char)*a) - tolower((unsigned char)*b);
 }
 
-void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se ritorna 1 l'utente esiste già invece se ritorna 2 è stato creato un nuovo account
+void verifica_id( giocatore *player, char id[], char nomefile[]) // se ritorna 1 l'utente esiste già invece se ritorna 2 è stato creato un nuovo account
 {
 
   FILE *fp;
@@ -127,7 +127,7 @@ void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se r
       printf("ho trovato l'id");
 
       strcpy(player->id, id_tmp); // siccome non è possibile passare direttamente l'array id_tmp all'id del player lo copiamo con strcpy
-      fscanf(fp, "games-played= %d\n", &player->partitr_giocate);
+      fscanf(fp, "games-played= %d\n", &player->partite_giocate);
       fscanf(fp, "games-won= %d\n", &player->partite_vinte);
       fscanf(fp, "points= %d\n", &player->punti);
       fscanf(fp, "tutorial= %d\n", &player->tutorial);
@@ -166,13 +166,15 @@ void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se r
 
       fp = fopen(nomefile, "a"); // apertura file in modalità append
       strcpy(player->id, id);
-      fprintf("id= %10s\n", id);
-      player.partite_giocate, player.partite_vinte, player.punti = 0;
-      fprintf("games-played= %d\n", 0);
-      fprintf("games-won= %d\n", 0);
-      fprintf("points= %d\n", 0);
-      fprintf("tutorial= %d\n", 1);
-      fprintf(".\n");
+      fprintf(fp,"id= %10s\n", id);
+      player->partite_giocate = 0;
+      player->partite_vinte = 0;
+      player->punti = 0;
+      fprintf(fp,"games-played= %d\n", 0);
+      fprintf(fp,"games-won= %d\n", 0);
+      fprintf(fp,"points= %d\n", 0);
+      fprintf(fp,"tutorial= %d\n", 1);
+      fprintf(fp,".\n");
       fclose(fp);
       system("clear");
       printf("Il tuo nuovo profilo utente è stato creato correttamente!!");
@@ -187,10 +189,10 @@ void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se r
   }
 }
 
-int settings_partita(int *lunghezza_codice, int *difficolta, struct giocatore *player) // se ritorna 0 c'è un problema, se ritorna 1 tutto ok e difficoltà settata, se ritorna 2 vuole vedere le regole
+int settings_partita(int *lunghezza_codice, int *difficolta,  giocatore *player) // se ritorna 0 c'è un problema, se ritorna 1 tutto ok e difficoltà settata, se ritorna 2 vuole vedere le regole
 {
   char consenso;
-  char[12] tmp;
+  char tmp [12];
   system("clear");
 
   if (player->tutorial == 1)
@@ -218,7 +220,7 @@ int settings_partita(int *lunghezza_codice, int *difficolta, struct giocatore *p
     printf("ok! procediamo...");
     player->tutorial = 0;
     printf("Devi scegliere se vuoi il codice segreto da 4, 6 o 8 elementi:\n");
-    scanf(" %d", *lunghezza_codice);
+    scanf(" %d", &lunghezza_codice);
     clear_input_buffer();
     printf("\n\n Ora devi scegliere la difficoltà di gioco.\n FACILE = 10 TENTATIVI\n INTERMEDIA = 8 TENTATIVI\n DIFFICILE = 6 TENTATIVI\n");
     scanf(" %11s", tmp);
@@ -259,12 +261,12 @@ void genera_codice(int *codice, int *lunghezza)
 
   if (codice == NULL) // se l'array codice non è stato inizializzato (quindi se è la prima partita della sessione)
   {
-    codice = (int *)malloc(sizeof(int) * lunghezza) // alloca memoria all'array in base alla lunghezza scelta dall'utente
+    codice = malloc((sizeof(int)) * (*lunghezza)); // alloca memoria all'array in base alla lunghezza scelta dall'utente
   }
 
   srand(time(NULL)); // inizializzo generatore di n umeri casuali con tempo nullo per garantire valori diversi ad ogni esecuzione
 
-  for (int i = 0; i < lunghezza; i++)
+  for (int i = 0; i < *lunghezza; i++)
   {
     tmp = ((rand() % 8) + 1); // valore casuale fra 1 e 8
     while (codice[i] == tmp)
@@ -275,7 +277,7 @@ void genera_codice(int *codice, int *lunghezza)
   }
 }
 
-void visualizza_regole(char nomefile[], struct giocatore *pointer)
+void visualizza_regole(char nomefile[],  giocatore *player)
 {
   int carattere;
   system("clear");
@@ -295,7 +297,7 @@ void visualizza_regole(char nomefile[], struct giocatore *pointer)
 
   fclose(fp);
 
-  pointer->tutorial = 0;
+  player->tutorial = 0;
 
   printf("\n\nPremi 'esc' per uscire:\n");
   while ((carattere = getchar()) != ESC_CHAR)
@@ -317,7 +319,7 @@ int menu()
 
   scanf("%d", &scelta);
 
-  while (scleta < 0 || scelta > 3)
+  while (scelta < 0 || scelta > 3)
   {
     printf("SCELTA NON VALIDA RIPROVARE!\n");
     printf("\n Scelta: ");
@@ -333,7 +335,7 @@ int main()
   system("clear");
 
   struct giocatore *player;                                      // Dichiarazione del puntatore alla struttura
-  player = (struct giocatore *)malloc(sizeof(struct giocatore)); // Allocazione di memoria per la struttura
+  player = malloc(sizeof(giocatore)); // Allocazione di memoria per la struttura
 
   int difficolta, lunghezza_codice, input_utente;
   char id_utente[LUNGHEZZA_ID]; // Buffer per 10 caratteri + terminatore nullo (\0) che viene aggiunto automaticamente alla fine dello scanf
@@ -370,7 +372,7 @@ int main()
 
     case 1:
       clear_input_buffer();
-      int settings = settings_partita(&lunghezza_codice, &a, player);
+      int settings = settings_partita(&lunghezza_codice, &difficolta, player);
       if (settings == 2)
       {
         visualizza_regole("regole.txt", player);
