@@ -267,7 +267,7 @@ int main()
   struct giocatore *player;                                      // Dichiarazione del puntatore alla struttura
   player = (struct giocatore *)malloc(sizeof(struct giocatore)); // Allocazione di memoria per la struttura
 
-  int difficoltà, lunghezza_codice, scelta;
+  int difficoltà, lunghezza_codice, input_utente;
   char id_utente[LUNGHEZZA_ID]; // Buffer per 10 caratteri + terminatore nullo (\0) che viene aggiunto automaticamente alla fine dello scanf
 
   printf("****** BENVENUTO IN MASTERMIND ******\n INSERISCI IL TUO ID UTENTE:\n");
@@ -291,9 +291,9 @@ int main()
 
     while (1)
     {
-      scelta = menu();
+      input_utente = menu();
 
-      switch (scelta)
+      switch (input_utente)
       {
       case 0:
         system("clear");
