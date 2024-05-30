@@ -82,7 +82,9 @@ typedef struct struttura_giocatore
 void clear_input_buffer()
 { // semplice funzione che serve per ipulire il buffer
   int ch;
-  while ((ch = getchar()) != '\n' && ch != EOF)
+  while ((ch = getchar()) != '\n' && ch != EOF){
+    getchar();
+  }
 }
 
 int strcasecmp(const char *a, const char *b) 
@@ -107,6 +109,8 @@ void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se r
 
   fp = fopen(nomefile, "r"); // apertura file in modalità lettura
 
+  printf("ho aperto il file");
+
   if (fp == NULL)
   {
     printf("errore apertura file \n");
@@ -119,12 +123,19 @@ void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se r
     if (strcasecmp(id, id_tmp) == 0)
     { // chiamo la funzione di confronto non case sensitive, se il valore di ritorno è 0 allora leggo e salvo dati utente
       // Trovato l'utente, leggi le informazioni
+
+      printf("ho trovato l'id");
+
       strcpy(player->id, id_tmp); // siccome non è possibile passare direttamente l'array id_tmp all'id del player lo copiamo con strcpy
       fscanf(fp, "games-played= %d\n", &player->partitr_giocate);
       fscanf(fp, "games-won= %d\n", &player->partite_vinte);
       fscanf(fp, "points= %d\n", &player->punti);
       fscanf(fp, "tutorial= %d\n", &player->tutorial);
+
+      printf("ho salvato i dati");
+
       fclose(fp);
+      
       printf("Utente trovato, sono stati recuperati i dati delle sessioni precedenti\n");
       trovato = 1;
       break;
@@ -151,6 +162,8 @@ void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se r
     consenso = getchar();
     if (consenso == 'y')
     {
+      printf("ho aperto il file");
+
       fp = fopen(nomefile, "a"); // apertura file in modalità append
       strcpy(player->id, id);
       fprintf("id= %10s\n", id);
@@ -174,7 +187,7 @@ void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se r
   }
 }
 
-int settings_partita(int *lunghezza_codice, int *difficoltà, struct giocatore *player) // se ritorna 0 c'è un problema, se ritorna 1 tutto ok e difficoltà settata, se ritorna 2 vuole vedere le regole
+int settings_partita(int *lunghezza_codice, int *difficolta, struct giocatore *player) // se ritorna 0 c'è un problema, se ritorna 1 tutto ok e difficoltà settata, se ritorna 2 vuole vedere le regole
 {
   char consenso;
   char[12] tmp;
@@ -220,19 +233,19 @@ int settings_partita(int *lunghezza_codice, int *difficoltà, struct giocatore *
 
     if (strcasecmp(tmp, "FACILE") == 1)
     {
-      *difficoltà = FACILE;
+      *difficolta = FACILE;
       return 1;
     }
 
     if (strcasecmp(tmp, "INTERMEDIA") == 1)
     {
-      *difficoltà = INTERMEDIA;
+      *difficolta = INTERMEDIA;
       return 1;
     }
 
     if (strcasecmp(tmp, "DIFFICILE") == 1)
     {
-      *difficoltà = DIFFICILE;
+      *difficolta = DIFFICILE;
       return 1;
     }
   }
@@ -322,7 +335,7 @@ int main()
   struct giocatore *player;                                      // Dichiarazione del puntatore alla struttura
   player = (struct giocatore *)malloc(sizeof(struct giocatore)); // Allocazione di memoria per la struttura
 
-  int difficoltà, lunghezza_codice, input_utente;
+  int difficolta, lunghezza_codice, input_utente;
   char id_utente[LUNGHEZZA_ID]; // Buffer per 10 caratteri + terminatore nullo (\0) che viene aggiunto automaticamente alla fine dello scanf
 
   int *codice;
@@ -357,7 +370,7 @@ int main()
 
     case 1:
       clear_input_buffer();
-      int settings = settings_partita(&lunghezza_codice, &difficoltà, player);
+      int settings = settings_partita(&lunghezza_codice, &a, player);
       if (settings == 2)
       {
         visualizza_regole("regole.txt", player);
@@ -367,6 +380,12 @@ int main()
         genera_codice(codice, &lunghezza_codice);
         // funzione di gioco
       }
+
+      printf("lungheza del codice= %d\n difficoltà= %d\n",lunghezza_codice,difficolta);
+      clear_input_buffer();
+      getchar();
+      clear_input_buffer();
+
       break;
 
     case 2:
