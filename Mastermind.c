@@ -58,6 +58,7 @@
 #define LUNGHEZZA_ID 11
 #define COLORI 8
 #define ESC_CHAR 0x1B
+
 /*
 #define ROSSO 1
 #define VERDE 2
@@ -84,7 +85,7 @@ void clear_input_buffer()
   while ((ch = getchar()) != '\n' && ch != EOF)
 }
 
-int strcasecmp(const char *a, const char *b) // la funzione è da rifare
+int strcasecmp(const char *a, const char *b) 
 {
   while (*a && *b)
   {
