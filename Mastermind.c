@@ -57,6 +57,7 @@
 
 #define LUNGHEZZA_ID 11
 #define COLORI 8
+#define ESC_CHAR 0x1B
 /*
 #define ROSSO 1
 #define VERDE 2
@@ -238,16 +239,16 @@ int settings_partita(int *lunghezza_codice, int *difficoltà, struct giocatore *
   return 0;
 }
 
-void genera_codice(int *codice, int * lunghezza)
+void genera_codice(int *codice, int *lunghezza)
 {
   int tmp;
 
-  if (codice == NULL) //se l'array codice non è stato inizializzato (quindi se è la prima partita della sessione)
+  if (codice == NULL) // se l'array codice non è stato inizializzato (quindi se è la prima partita della sessione)
   {
-    codice = (int *)malloc(sizeof(int) * lunghezza) //alloca memoria all'array in base alla lunghezza scelta dall'utente
+    codice = (int *)malloc(sizeof(int) * lunghezza) // alloca memoria all'array in base alla lunghezza scelta dall'utente
   }
 
-  srand(time(NULL)); //inizializzo generatore di n umeri casuali con tempo nullo per garantire valori diversi ad ogni esecuzione
+  srand(time(NULL)); // inizializzo generatore di n umeri casuali con tempo nullo per garantire valori diversi ad ogni esecuzione
 
   for (int i = 0; i < lunghezza; i++)
   {
@@ -258,6 +259,36 @@ void genera_codice(int *codice, int * lunghezza)
     }
     codice[i] = tmp;
   }
+}
+
+void visualizza_regole(char nomefile[], struct giocatore *pointer)
+{
+  int carattere;
+  system("clear");
+  FILE *fp;
+  fp = fopen(nomefile, "r");
+  if (fp == NULL)
+  {
+    printf("errore apertura file \n");
+    exit(1);
+  }
+
+  // Leggi e stampa il file carattere per carattere
+  while ((carattere = fgetc(fp)) != EOF)
+  {
+    putchar(carattere); // stampa il carattere attraverso il valore ascii dello stesso
+  }
+
+  fclose(fp);
+
+  pointer->tutorial = 0;
+
+  printf("\n\nPremi 'esc' per uscire:\n");
+  while ((carattere = getchar()) != ESC_CHAR)
+  {
+    carattere = getchar(); // Continui a leggere caratteri fino a che non viene premuto ESC
+  }
+
 }
 
 int menu()
@@ -328,11 +359,11 @@ int main()
       int settings = settings_partita(&lunghezza_codice, &difficoltà, player);
       if (settings == 2)
       {
-        // funzione che chiama la lettura delle regole ed imposta tutorial a 0
+        visualizza_regole("regole.txt", player);
       }
       if (settings == 1)
       {
-        genera_codice(codice,&lunghezza_codice);
+        genera_codice(codice, &lunghezza_codice);
         // funzione di gioco
       }
       break;
@@ -340,7 +371,7 @@ int main()
     case 2:
       clear_input_buffer();
       system("clear");
-      // funzione che chiama la lettura delle regole ed imposta tutorial a 0
+      visualizza_regole("regole.txt", player);
       break;
 
     case 3:
