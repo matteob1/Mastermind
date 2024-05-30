@@ -49,13 +49,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #define FACILE 10
 #define INTERMEDIA 8
 #define DIFFICILE 6
 
 #define LUNGHEZZA_ID 11
-
+#define COLORI 8
 /*
 #define ROSSO 1
 #define VERDE 2
@@ -83,17 +84,17 @@ void clear_input_buffer()
 }
 
 int strcasecmp(const char *a, const char *b) // la funzione è da rifare
-{ 
+{
   while (*a && *b)
-  { 
+  {
     if (tolower((unsigned char)*a) != tolower((unsigned char)*b))
-    {                                                                 
-      return tolower((unsigned char)*a) - tolower((unsigned char)*b); 
+    {
+      return tolower((unsigned char)*a) - tolower((unsigned char)*b);
     }
     a++;
     b++;
   }
-  return tolower((unsigned char)*a) - tolower((unsigned char)*b); 
+  return tolower((unsigned char)*a) - tolower((unsigned char)*b);
 }
 
 void verifica_id(struct giocatore *player, char id[11], char nomefile[]) // se ritorna 1 l'utente esiste già invece se ritorna 2 è stato creato un nuovo account
@@ -193,7 +194,7 @@ int settings_partita(int *lunghezza_codice, int *difficoltà, struct giocatore *
 
   if (consenso == 'y')
   {
-    clear_input_buffer();  // ancora player.tutorial vale 1 dovrà essere portato a 0 dalla funzione per vedere le regole
+    clear_input_buffer(); // ancora player.tutorial vale 1 dovrà essere portato a 0 dalla funzione per vedere le regole
     return 2;
   }
 
@@ -237,6 +238,28 @@ int settings_partita(int *lunghezza_codice, int *difficoltà, struct giocatore *
   return 0;
 }
 
+void genera_codice(int *codice, int * lunghezza)
+{
+  int tmp;
+
+  if (codice == NULL) //se l'array codice non è stato inizializzato (quindi se è la prima partita della sessione)
+  {
+    codice = (int *)malloc(sizeof(int) * lunghezza) //alloca memoria all'array in base alla lunghezza scelta dall'utente
+  }
+
+  srand(time(NULL)); //inizializzo generatore di n umeri casuali con tempo nullo per garantire valori diversi ad ogni esecuzione
+
+  for (int i = 0; i < lunghezza; i++)
+  {
+    tmp = ((rand() % 8) + 1); // valore casuale fra 1 e 8
+    while (codice[i] == tmp)
+    {
+      tmp = ((rand() % COLORI) + 1);
+    }
+    codice[i] = tmp;
+  }
+}
+
 int menu()
 {
   int scelta;
@@ -270,6 +293,8 @@ int main()
   int difficoltà, lunghezza_codice, input_utente;
   char id_utente[LUNGHEZZA_ID]; // Buffer per 10 caratteri + terminatore nullo (\0) che viene aggiunto automaticamente alla fine dello scanf
 
+  int *codice;
+
   printf("****** BENVENUTO IN MASTERMIND ******\n INSERISCI IL TUO ID UTENTE:\n");
   // Usa fgets per leggere la stringa, inclusi gli spazi
   if (fgets(id_utente, sizeof(id_utente), stdin) != NULL)
@@ -287,44 +312,45 @@ int main()
   clear_input_buffer();
   verifica_id(player, id_utente, "data.txt");
 
-  
+  while (1)
+  {
+    input_utente = menu();
 
-    while (1)
+    switch (input_utente)
     {
-      input_utente = menu();
+    case 0:
+      system("clear");
+      exit(0);
+      break;
 
-      switch (input_utente)
-      {
-      case 0:
-        system("clear");
-        exit(0);
-        break;
-
-      case 1:
-        clear_input_buffer();
-        int settings= settings_partita(&lunghezza_codice,&difficoltà,player);
-        if(settings == 2){
-          //funzione che chiama la lettura delle regole ed imposta tutorial a 0
-        }
-        if(settings == 1){
-          //funzione di gioco
-        }
-        break;
-
-      case 2:
-        clear_input_buffer();
-        system("clear");
-        //funzione che chiama la lettura delle regole ed imposta tutorial a 0
-        break;
-      
-      case 3:
+    case 1:
       clear_input_buffer();
-        //storico del giocatore
-        break;
-
-      default:
-        break;
+      int settings = settings_partita(&lunghezza_codice, &difficoltà, player);
+      if (settings == 2)
+      {
+        // funzione che chiama la lettura delle regole ed imposta tutorial a 0
       }
+      if (settings == 1)
+      {
+        genera_codice(codice,&lunghezza_codice);
+        // funzione di gioco
+      }
+      break;
+
+    case 2:
+      clear_input_buffer();
+      system("clear");
+      // funzione che chiama la lettura delle regole ed imposta tutorial a 0
+      break;
+
+    case 3:
+      clear_input_buffer();
+      // storico del giocatore
+      break;
+
+    default:
+      break;
     }
+  }
   return 0;
 }
