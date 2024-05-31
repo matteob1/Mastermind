@@ -198,7 +198,7 @@ void genera_codice(int *codice, int *lunghezza) //da testare
   }
 }
 
-void visualizza_regole(char nomefile[], giocatore *player) // funziona
+void visualizza_regole(char nomefile[], giocatore *player) // da testare
 {
   int carattere;
   system("clear");
@@ -221,7 +221,7 @@ void visualizza_regole(char nomefile[], giocatore *player) // funziona
   fclose(fp);
 
   printf("\n\nPremi un tasto qualsiasi per tornare al menù:\n");
-  getchar();
+  getchar();  //da modificare
   system("clear");
 }
 
