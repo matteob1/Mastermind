@@ -10,9 +10,4 @@ games-won= 0
 points= 0
 tutorial= 1
 .
-id= coglione4
-games-played= 0
-games-won= 0
-points= 0
-tutorial= 1
-.
+
