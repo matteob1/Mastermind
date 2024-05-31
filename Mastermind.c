@@ -60,7 +60,7 @@ typedef struct struttura_giocatore
   int tutorial;
 } giocatore;
 
-void clear_input_buffer()
+void clear_input_buffer() //funziona
 { // semplice funzione che serve per ipulire il buffer
   int ch;
   do
@@ -69,7 +69,7 @@ void clear_input_buffer()
   } while (ch != '\n' && ch != EOF);
 }
 
-int insensitive_compare(char stringa1[], char stringa2[])
+int insensitive_compare(char stringa1[], char stringa2[]) //funziona
 {
   int status = 0;
   // Converti stringa1 in minuscolo
@@ -97,13 +97,13 @@ int insensitive_compare(char stringa1[], char stringa2[])
   return 1; // Le stringhe sono uguali
 }
 
-void verifica_id(giocatore *player, char id[], char nomefile[]) // se ritorna 1 l'utente esiste già invece se ritorna 2 è stato creato un nuovo account
+void verifica_id() //da rifare completamente
 {
-  //rifare verifica id
   return;
 }
 
-int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player) // se ritorna 0 c'è un problema, se ritorna 1 tutto ok e difficoltà settata, se ritorna 2 vuole vedere le regole
+int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player) //da testare
+
 {
   char consenso;
   char tmp[12];
@@ -173,9 +173,10 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player) 
   }
 
   return 0;
+  // se ritorna 0 c'è un problema, se ritorna 1 tutto ok e difficoltà settata, se ritorna 2 vuole vedere le regole
 }
 
-void genera_codice(int *codice, int *lunghezza)
+void genera_codice(int *codice, int *lunghezza) //da testare
 {
   int tmp;
 
@@ -197,7 +198,7 @@ void genera_codice(int *codice, int *lunghezza)
   }
 }
 
-void visualizza_regole(char nomefile[], giocatore *player)
+void visualizza_regole(char nomefile[], giocatore *player) // funziona
 {
   int carattere;
   system("clear");
@@ -219,11 +220,12 @@ void visualizza_regole(char nomefile[], giocatore *player)
 
   fclose(fp);
 
-  printf("\n\nPremi invio per tornare al menù:\n");
+  printf("\n\nPremi un tasto qualsiasi per tornare al menù:\n");
   getchar();
+  system("clear");
 }
 
-int menu()
+int menu()  //funziona ma da testare diversi tipi di input
 {
   int scelta;
   printf("****** BENVENUTO IN MASTERMIND ******\n\n");
@@ -274,17 +276,11 @@ int main()
   appoggio[strcspn(appoggio, "\n")] = '\0'; // Rimuove il newline finale, se presente */
   strcpy(id_utente, appoggio);
 
-  printf("valore di id_utente copiato da appoggio %s", id_utente);
-  getchar();
   /* la funzione strcspn scansiona
  la stringa passata nel primo parametro fino a quando non trova corrispondenza con almeno uno dei caratteri contenuti nella stringa passata
  come secondo parametro ("\n"). Ha come valore di ritorno il contatore di posizioni analizzate a partire da zero.
  Quindi abbiamo preso l'elemento dell'array "id_utente" nella posizione del carattere \n (se presente) e lo sostituiamo con il carattere nullo*/
 
-  printf("Stringa letta: '%s'\n", id_utente);
-
-  verifica_id(player, id_utente, "data.txt");
-  printf("Sono tornato da verifica id\n");
 
   while (1)
   {
