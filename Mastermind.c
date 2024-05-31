@@ -252,6 +252,7 @@ int main()
 {
   system("clear");
 
+
   struct giocatore *player;           // Dichiarazione del puntatore alla struttura
   player = malloc(sizeof(giocatore)); // Allocazione di memoria per la struttura
 
