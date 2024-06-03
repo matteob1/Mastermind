@@ -68,6 +68,7 @@ void clear_input_buffer() //funziona
   } while (ch != '\n' && ch != EOF);
 }
 
+
 int insensitive_compare(char stringa1[], char stringa2[]) //funziona
 {
   int status = 0;
@@ -96,7 +97,7 @@ int insensitive_compare(char stringa1[], char stringa2[]) //funziona
   return 1; // Le stringhe sono uguali
 }
 
-void verifica_id(char nomefile [], char id_inserito [], giocatore* player) //da finire
+void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char buffer[]) //da finire
 {
     char id_letto [LUNGHEZZA_ID];
 
@@ -110,21 +111,32 @@ void verifica_id(char nomefile [], char id_inserito [], giocatore* player) //da 
     }
     int res=0;
 
-    while(fscanf(fp, "%[^\n]", id_letto) != EOF){
-        fgetc(fp);
+    while(fscanf(fp, "%[^\n]", id_letto) != EOF){ //finchè non è alla fine del file legge fino alla fine della riga considerando gli spazi
+        fgetc(fp); //consuma il carattere \n che fa andare il puntatore a capo
         printf("id letto= |%s| \n",id_letto);
         if(insensitive_compare(id_letto,id_inserito)==1){
             strcpy(player->id,id_letto);
-            printf("player->id= %s\n",player->id); // fino a qua funziona legge e copia su player id, aggiustare il salvataggio degli altri parametri.
-
-            //fscanf(fp,"%d %d %d %d",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
-           // printf("dati salvati:\n giocate= |%d|\n vinte=|%d|\n punti=|%d|\n tutorial=|%d|\n",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
+            printf("player->id= %s\n",player->id);
+            fscanf(fp,"%d %d %d %d",&player->partite_giocate,&player->partite_vinte,&player->punti,&player->tutorial);
+            printf("dati salvati:\n giocate= |%d|\n vinte=|%d|\n punti=|%d|\n tutorial=|%d|\n",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
            return;
         }
     }
 
 
     //se l'id non viene trovato
+    printf("L'id da te inserito non è presente in memoria. Vuoi crearlo?\n y/n\n");
+
+
+    fgets(buffer, ROW, stdin);// da finire (frammento di codice preso dal main creare una vunzione per richiamarlo
+    // avrà come parametri la dimensione dell'input (main =LUNGHEZZA_ID, qui buffer...) LA PARTE SCRITTA NON È STATA TESTATA
+    while (buffer[0] == '\n' || strlen(buffer) > sizeof (buffer)|| buffer[0] == ESC )
+    {
+        printf("input non valido, riprova\n");
+        fgets(buffer, sizeof(buffer), stdin);
+    }
+    buffer[strcspn(buffer, "\n")] = '\0';
+
 
 }
 
@@ -279,8 +291,7 @@ int main()
   system("clear");
 
 
-  giocatore *player;           // Dichiarazione del puntatore alla struttura
-  player = (giocatore *)malloc(sizeof(giocatore)); // Allocazione di memoria per una singola struttura
+    giocatore *player = (giocatore *)malloc(sizeof(giocatore));
 
   int difficolta, lunghezza_codice, input_utente, settings;
   char id_utente[LUNGHEZZA_ID];
@@ -298,7 +309,7 @@ int main()
     }
     printf("sono dopo il while\n");
 
-  buffer[strcspn(buffer, "\n")] = '\0'; // Rimuove il newline finale, se presente */
+  buffer[strcspn(buffer, "\n")] = '\0'; // Rimuove il newline finale, se presente
     printf("ho rimosso il new line\n");
   strcpy(id_utente, buffer);
     printf("ho copiato id utente da buffer\n");
@@ -308,7 +319,7 @@ int main()
  come secondo parametro ("\n"). Ha come valore di ritorno il contatore di posizioni analizzate a partire da zero.
  Quindi abbiamo preso l'elemento dell'array "id_utente" nella posizione del carattere \n (se presente) e lo sostituiamo con il carattere nullo*/
     printf("sto per entrare in verifica id\n");
-    verifica_id("data.txt", id_utente,player);
+    verifica_id("data.txt", id_utente,player,buffer);
     printf("sono uscito da verifica id\n");
     getchar();
     clear_input_buffer();
@@ -322,6 +333,7 @@ int main()
     {
     case 0:
       system("clear");
+      free(player);
       exit(0);
       break;
 
