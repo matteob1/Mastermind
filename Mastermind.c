@@ -308,7 +308,7 @@ int main()
  come secondo parametro ("\n"). Ha come valore di ritorno il contatore di posizioni analizzate a partire da zero.
  Quindi abbiamo preso l'elemento dell'array "id_utente" nella posizione del carattere \n (se presente) e lo sostituiamo con il carattere nullo*/
     printf("sto per entrare in verifica id\n");
-    verifica_id("data.txt", id_utente,player,buffer);
+    verifica_id("data.txt", id_utente,player);
     printf("sono uscito da verifica id\n");
     getchar();
     clear_input_buffer();
