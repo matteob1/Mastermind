@@ -120,7 +120,7 @@ void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char 
             fscanf(fp,"%d %d %d %d",&player->partite_giocate,&player->partite_vinte,&player->punti,&player->tutorial);
             printf("dati salvati:\n giocate= |%d|\n vinte=|%d|\n punti=|%d|\n tutorial=|%d|\n",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
            return;
-        }
+        } //questo while è stato testato e funziona
     }
 
 
