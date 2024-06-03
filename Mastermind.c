@@ -96,7 +96,7 @@ int insensitive_compare(char stringa1[], char stringa2[]) //funziona
   return 1; // Le stringhe sono uguali
 }
 
-void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char buffer []) //da finire
+void verifica_id(char nomefile [], char id_inserito [], giocatore* player) //da finire
 {
     char id_letto [LUNGHEZZA_ID];
 
@@ -124,52 +124,7 @@ void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char 
     }
 
 
-
-
-
-
-    fclose(fp);
-    printf("ho chiuso il file read mode\n");
-    //arrivati a questo punto vuol dire che l'utente non esiste e bisogna crearlo
-
-    printf("Nome utente non trovato, vuoi creare un nuovo profilo?\n y/n\n");
-
-
-    while (fgets(buffer, ROW, stdin))
-    {
-        while (buffer[0] == '\n' || strlen(buffer) > sizeof (char) || buffer[0] == ESC)
-        {
-            printf("input non valido, riprova\n");
-            fgets(buffer, sizeof(buffer), stdin);
-        }
-        break;
-    }
-    buffer[strcspn(buffer, "\n")] = '\0';
-
-    if(buffer[0]=='y'){
-
-        strcpy(player->id,id_inserito);
-        player->punti=0;
-        player->partite_giocate=0;
-        player->partite_vinte=0;
-        player->tutorial=1;
-
-        fp= fopen(nomefile,"a");
-        fprintf(fp,"id= %s\n",id_inserito);
-        fprintf(fp,"games-played= %d\n",0);
-        fprintf(fp,"games-won= %d\n",0);
-        fprintf(fp,"points= %d\n",0);
-        fprintf(fp,"tutorial= %d\n",0);
-        fprintf(fp,".\n");
-        fclose(fp);
-        printf("Il tuo profilo è stato creato correttamente");
-    }
-    else{
-        system("clear");
-        printf("Alla prossima!!");
-        exit(0);
-    }
-
+    //se l'id non viene trovato
 
 }
 
@@ -325,7 +280,7 @@ int main()
 
 
   giocatore *player;           // Dichiarazione del puntatore alla struttura
-  player = (giocatore *)malloc(sizeof(giocatore)); // Allocazione di memoria per la struttura
+  player = (giocatore *)malloc(sizeof(giocatore)); // Allocazione di memoria per una singola struttura
 
   int difficolta, lunghezza_codice, input_utente, settings;
   char id_utente[LUNGHEZZA_ID];
