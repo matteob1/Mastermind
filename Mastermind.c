@@ -18,13 +18,10 @@
     incrementeranno i valori di partite giocate, partite vinte e il punteggio.
 
   La struttura dei dati contenuti nel file per singolo giocatore sarà la seguente:
+  xxxx (id utente)
+  n n n n  (partite giocate, partite vinte, punti, tutorial)
+  . (separatore)
 
-  id= id utente // max 10 caratteri
-  games-played= n\n
-  games-won= n\n
-  points= n\n
-  tutorial= 0/1\n
-  .\n // separatore
 */
 
 #include <stdio.h>
@@ -37,8 +34,10 @@
 #define INTERMEDIA 8
 #define DIFFICILE 6
 
-#define LUNGHEZZA_ID 10
+#define LUNGHEZZA_ID 11
 #define COLORI 8
+#define ESC 27
+#define ROW 256
 
 /*
 #define ROSSO 1
@@ -51,7 +50,7 @@
 #define BIANCO 8
 */
 
-typedef struct struttura_giocatore
+typedef struct Sgiocatore
 {
   char id[LUNGHEZZA_ID];
   int partite_giocate;
@@ -86,7 +85,7 @@ int insensitive_compare(char stringa1[], char stringa2[]) //funziona
 
   // Confronta le stringhe e restituisci il risultato
   int x = 0;
-  while (stringa1[x] != '\0' && stringa2[x] != '\0')
+  while (stringa1[x] != '\0' || stringa2[x] != '\0')
   {
     if (stringa1[x] != stringa2[x])
     {
@@ -97,9 +96,81 @@ int insensitive_compare(char stringa1[], char stringa2[]) //funziona
   return 1; // Le stringhe sono uguali
 }
 
-void verifica_id() //da rifare completamente
+void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char buffer []) //da finire
 {
-  return;
+    char id_letto [LUNGHEZZA_ID];
+
+
+    FILE * fp= fopen(nomefile,"r");
+    printf("ho aperto il file\n");
+
+    if(fp == NULL){
+        printf("ERRORE NELL'APERTURA DEL FILE!\n");
+        exit(1);
+    }
+    int res=0;
+
+    while(fscanf(fp, "%[^\n]", id_letto) != EOF){
+        fgetc(fp);
+        printf("id letto= |%s| \n",id_letto);
+        if(insensitive_compare(id_letto,id_inserito)==1){
+            strcpy(player->id,id_letto);
+            printf("player->id= %s\n",player->id); // fino a qua funziona legge e copia su player id, aggiustare il salvataggio degli altri parametri.
+
+            //fscanf(fp,"%d %d %d %d",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
+           // printf("dati salvati:\n giocate= |%d|\n vinte=|%d|\n punti=|%d|\n tutorial=|%d|\n",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
+           return;
+        }
+    }
+
+
+
+
+
+
+    fclose(fp);
+    printf("ho chiuso il file read mode\n");
+    //arrivati a questo punto vuol dire che l'utente non esiste e bisogna crearlo
+
+    printf("Nome utente non trovato, vuoi creare un nuovo profilo?\n y/n\n");
+
+
+    while (fgets(buffer, ROW, stdin))
+    {
+        while (buffer[0] == '\n' || strlen(buffer) > sizeof (char) || buffer[0] == ESC)
+        {
+            printf("input non valido, riprova\n");
+            fgets(buffer, sizeof(buffer), stdin);
+        }
+        break;
+    }
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if(buffer[0]=='y'){
+
+        strcpy(player->id,id_inserito);
+        player->punti=0;
+        player->partite_giocate=0;
+        player->partite_vinte=0;
+        player->tutorial=1;
+
+        fp= fopen(nomefile,"a");
+        fprintf(fp,"id= %s\n",id_inserito);
+        fprintf(fp,"games-played= %d\n",0);
+        fprintf(fp,"games-won= %d\n",0);
+        fprintf(fp,"points= %d\n",0);
+        fprintf(fp,"tutorial= %d\n",0);
+        fprintf(fp,".\n");
+        fclose(fp);
+        printf("Il tuo profilo è stato creato correttamente");
+    }
+    else{
+        system("clear");
+        printf("Alla prossima!!");
+        exit(0);
+    }
+
+
 }
 
 int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player) //da testare
@@ -253,35 +324,39 @@ int main()
   system("clear");
 
 
-  struct giocatore *player;           // Dichiarazione del puntatore alla struttura
-  player = malloc(sizeof(giocatore)); // Allocazione di memoria per la struttura
+  giocatore *player;           // Dichiarazione del puntatore alla struttura
+  player = (giocatore *)malloc(sizeof(giocatore)); // Allocazione di memoria per la struttura
 
   int difficolta, lunghezza_codice, input_utente, settings;
   char id_utente[LUNGHEZZA_ID];
-  char appoggio[256];
-  char esc_char = 27;
+  char buffer[ROW];
   int *codice;
 
   printf("****** BENVENUTO IN MASTERMIND ******\n INSERISCI IL TUO ID UTENTE:\n");
 
-  while (fgets(appoggio, 256, stdin))
-  {
-    while (appoggio[0] == '\n' || strlen(appoggio) > LUNGHEZZA_ID || appoggio[0] == esc_char)
+    fgets(buffer, ROW, stdin);
+    printf("ho letto\n");
+    while (buffer[0] == '\n' || strlen(buffer) > LUNGHEZZA_ID || buffer[0] == ESC)
     {
       printf("input non valido, riprova\n");
-      fgets(appoggio, sizeof(appoggio), stdin);
+      fgets(buffer, sizeof(buffer), stdin);
     }
-    break;
-  }
+    printf("sono dopo il while\n");
 
-  appoggio[strcspn(appoggio, "\n")] = '\0'; // Rimuove il newline finale, se presente */
-  strcpy(id_utente, appoggio);
+  buffer[strcspn(buffer, "\n")] = '\0'; // Rimuove il newline finale, se presente */
+    printf("ho rimosso il new line\n");
+  strcpy(id_utente, buffer);
+    printf("ho copiato id utente da buffer\n");
 
   /* la funzione strcspn scansiona
  la stringa passata nel primo parametro fino a quando non trova corrispondenza con almeno uno dei caratteri contenuti nella stringa passata
  come secondo parametro ("\n"). Ha come valore di ritorno il contatore di posizioni analizzate a partire da zero.
  Quindi abbiamo preso l'elemento dell'array "id_utente" nella posizione del carattere \n (se presente) e lo sostituiamo con il carattere nullo*/
-
+    printf("sto per entrare in verifica id\n");
+    verifica_id("data.txt", id_utente,player,buffer);
+    printf("sono uscito da verifica id\n");
+    getchar();
+    clear_input_buffer();
 
   while (1)
   {
