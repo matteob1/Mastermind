@@ -60,12 +60,13 @@ typedef struct Sgiocatore
 } giocatore;
 
 void clear_input_buffer() //funziona
-{ // semplice funzione che serve per ipulire il buffer
-  int ch;
+{ // semplice funzione che serve per pulire il buffer
+  /*int ch;
   do
   {
     ch = getchar();
-  } while (ch != '\n' && ch != EOF);
+  } while (ch != '\n' && ch != EOF);*/
+    while ((getchar()) != '\n');
 }
 
 
@@ -97,7 +98,7 @@ int insensitive_compare(char stringa1[], char stringa2[]) //funziona
   return 1; // Le stringhe sono uguali
 }
 
-void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char buffer[]) //da finire
+void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char buffer[]) //finita e testata FUNZIONA
 {
     char id_letto [LUNGHEZZA_ID];
 
@@ -115,10 +116,13 @@ void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char 
         fgetc(fp); //consuma il carattere \n che fa andare il puntatore a capo
         printf("id letto= |%s| \n",id_letto);
         if(insensitive_compare(id_letto,id_inserito)==1){
+            printf("Id trovato!\nCaricamento dei dati in memoria...\n");
             strcpy(player->id,id_letto);
             printf("player->id= %s\n",player->id);
             fscanf(fp,"%d %d %d %d",&player->partite_giocate,&player->partite_vinte,&player->punti,&player->tutorial);
-            printf("dati salvati:\n giocate= |%d|\n vinte=|%d|\n punti=|%d|\n tutorial=|%d|\n",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
+            //printf("dati salvati:\n giocate= |%d|\n vinte=|%d|\n punti=|%d|\n tutorial=|%d|\n",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
+            printf("Caricamento terminato!\n");
+            fclose(fp);
            return;
         } //questo while è stato testato e funziona
     }
@@ -128,15 +132,35 @@ void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char 
     printf("L'id da te inserito non è presente in memoria. Vuoi crearlo?\n y/n\n");
 
 
-    fgets(buffer, ROW, stdin);// da finire (frammento di codice preso dal main creare una vunzione per richiamarlo
-    // avrà come parametri la dimensione dell'input (main =LUNGHEZZA_ID, qui buffer...) LA PARTE SCRITTA NON È STATA TESTATA
-    while (buffer[0] == '\n' || strlen(buffer) > sizeof (buffer)|| buffer[0] == ESC )
-    {
-        printf("input non valido, riprova\n");
-        fgets(buffer, sizeof(buffer), stdin);
+    scanf("%1[^\n]",buffer);
+    while(*buffer != 'y' && *buffer != 'n' && *buffer != 'Y' && *buffer != 'N'){
+        //printf("input= |%s|\n",buffer);
+        printf("Input non valido,riprova\n");
+        clear_input_buffer();
+        scanf("%1[^\n]",buffer);
     }
-    buffer[strcspn(buffer, "\n")] = '\0';
+    printf("input= |%s|",buffer);
 
+    if(*buffer=='y' || *buffer=='Y'){
+        fp=fopen(nomefile,"a");
+
+        strcpy(player->id,id_inserito);
+        player->partite_giocate=0;
+        player->partite_vinte=0;
+        player->punti=0;
+        player->tutorial=1;
+
+        fprintf(fp,"%s\n",id_inserito);
+        fprintf(fp,"%d %d %d %d\n",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
+        fprintf(fp,".\n");
+        fclose(fp);
+        printf("Il tuo profilo è stato creato correttamente!\n");
+    }
+    else if(*buffer=='n' || *buffer=='N'){
+        printf("Alla prossima!!\n");
+        free(player);
+        exit(0);
+    }
 
 }
 
