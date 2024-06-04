@@ -38,6 +38,7 @@
 #define COLORI 8
 #define ESC 27
 #define ROW 256
+#define CLEAN_BUFFER while ((getchar()) != '\n')
 
 /*
 #define ROSSO 1
@@ -58,16 +59,6 @@ typedef struct Sgiocatore
   int punti;
   int tutorial;
 } giocatore;
-
-void clear_input_buffer() //funziona
-{ // semplice funzione che serve per pulire il buffer
-  /*int ch;
-  do
-  {
-    ch = getchar();
-  } while (ch != '\n' && ch != EOF);*/
-    while ((getchar()) != '\n');
-}
 
 
 int insensitive_compare(char stringa1[], char stringa2[]) //funziona
@@ -136,7 +127,7 @@ void verifica_id(char nomefile [], char id_inserito [], giocatore* player, char 
     while(*buffer != 'y' && *buffer != 'n' && *buffer != 'Y' && *buffer != 'N'){
         //printf("input= |%s|\n",buffer);
         printf("Input non valido,riprova\n");
-        clear_input_buffer();
+        CLEAN_BUFFER;
         scanf("%1[^\n]",buffer);
     }
     printf("input= |%s|",buffer);
@@ -175,20 +166,20 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player) 
   if (player->tutorial == 1)
   {
     printf("Non hai mai visto le regole, vuoi vederle?\n y/n\n");
-    clear_input_buffer();
+    CLEAN_BUFFER;
     consenso = getchar();
 
     while (consenso != 'y' && consenso != 'n')
     {
       printf("Scelta non valida! Riprovare\n");
-      clear_input_buffer();
+      CLEAN_BUFFER;
       consenso = getchar();
     }
   }
 
   if (consenso == 'y')
   {
-    clear_input_buffer(); // ancora player.tutorial vale 1 dovrà essere portato a 0 dalla funzione per vedere le regole
+    CLEAN_BUFFER; // ancora player.tutorial vale 1 dovrà essere portato a 0 dalla funzione per vedere le regole
     return 2;
   }
 
@@ -201,12 +192,12 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player) 
     while (lunghezza_codice != 4 || lunghezza_codice != 6 || lunghezza_codice != 8)
     {
       printf("Scelta non valida! Riprovare\n");
-      clear_input_buffer();
+      CLEAN_BUFFER;
       scanf(" %d", &lunghezza_codice);
     }
 
     printf("\n\n Ora devi scegliere la difficoltà di gioco.\n FACILE = 10 TENTATIVI\n INTERMEDIA = 8 TENTATIVI\n DIFFICILE = 6 TENTATIVI\n");
-    clear_input_buffer();
+    CLEAN_BUFFER;
     scanf(" %11s", tmp);
 
     if (insensitive_compare("FACILE", tmp) == 1)
@@ -229,7 +220,7 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player) 
     while (difficolta_scelta != 1)
     {
       printf("Scelta non valida! Riprovare\n");
-      clear_input_buffer();
+      CLEAN_BUFFER;
       scanf(" %11s", tmp);
     }
   }
@@ -346,7 +337,7 @@ int main()
     verifica_id("data.txt", id_utente,player,buffer);
     printf("sono uscito da verifica id\n");
     getchar();
-    clear_input_buffer();
+   CLEAN_BUFFER;
 
   while (1)
   {
@@ -375,20 +366,20 @@ int main()
       }
 
       printf("lungheza del codice= %d\n difficoltà= %d\n", lunghezza_codice, difficolta);
-      clear_input_buffer();
+      CLEAN_BUFFER;
       getchar();
-      clear_input_buffer();
+      CLEAN_BUFFER;
 
       break;
 
     case 2:
-      clear_input_buffer();
+      CLEAN_BUFFER;
       system("clear");
       visualizza_regole("regole.txt", player);
       break;
 
     case 3:
-      clear_input_buffer();
+      CLEAN_BUFFER;
       // storico del giocatore
       break;
 

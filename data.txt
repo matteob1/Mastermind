@@ -16,3 +16,6 @@ matteo
 matteo b
 0 0 0 1
 .
+gioco
+0 0 0 1
+.
