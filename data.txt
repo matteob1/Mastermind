@@ -11,11 +11,11 @@ test
 1 3 5 1
 .
 matteo
-0 0 0 1
+0 0 0 0
 .
 matteo b
 0 0 0 1
 .
 gioco
-0 0 0 1
+0 0 0 0
 .
