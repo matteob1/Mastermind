@@ -123,7 +123,7 @@ void verifica_id(char nomefile[], char id_inserito[], giocatore *player, char in
     scanf("%1[^\n]", input);
     while (*input != 'y' && *input != 'n' && *input != 'Y' && *input != 'N') {
         //printf("input= |%s|\n",buffer);
-        printf("scelta non valido,riprova\n");
+        printf("Input non valido,riprova\n");
         CLEAN_BUFFER;
         scanf("%1[^\n]", input);
     }
@@ -222,7 +222,7 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player, 
     printf("Scegli la lunghezza del codice segreto. (8-6-4)\n");
     scanf(" %1d", lunghezza_codice);
     while (*lunghezza_codice != 4 && *lunghezza_codice != 6 && *lunghezza_codice != 8 ) {
-        printf("Input non valido! Riprovare\n");
+        printf("Input non valido,riprova\n");
         CLEAN_BUFFER;
         scanf(" %1d", lunghezza_codice);
     }
@@ -234,7 +234,7 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player, 
     scanf("%s",input);
    while(insensitive_compare(input,facile) !=1 && insensitive_compare(input,intermedia) != 1
                                                             && insensitive_compare(input,difficile) != 1){
-       printf("Input non valido! Riprovare\n");
+       printf("Input non valido,riprova\n");
        CLEAN_BUFFER;
        scanf("%s",input);
    }
@@ -256,39 +256,40 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player, 
     return 0;
 }
 
-void genera_codice(int *codice, int *lunghezza) //da rifare
+int * genera_codice(int *codice, int *lunghezza_codice) //Funziona
 {
-    /*
-    int tmp;
 
     if (codice == NULL) // se l'array codice non è stato inizializzato (quindi se è la prima partita della sessione)
     {
-        codice = malloc((sizeof(int)) * (*lunghezza)); // alloca memoria all'array in base alla lunghezza scelta dall'utente
+        printf("sto per allocare memoria al codice poichè è nullo\n");
+        codice = (int *) malloc(sizeof(int)*(*lunghezza_codice));
+        printf("fatto\n");// alloc
+        // a memoria all'array in base alla lunghezza scelta dall'utente
     }
 
-    srand(time(
-            NULL)); // inizializzo generatore di n umeri casuali con tempo nullo per garantire valori diversi ad ogni esecuzione
-
-    for (int i = 0; i < *lunghezza; i++) {
-        tmp = ((rand() % 8) + 1); // valore casuale fra 1 e 8
-        while (codice[i] == tmp) {
-            tmp = ((rand() % COLORI) + 1);
-        }
-        codice[i] = tmp;
+    srand(time(NULL)); // inizializzo generatore di n umeri casuali con tempo nullo per garantire valori diversi ad ogni esecuzione
+    printf("inizializzato srand\n");
+    for(int i=0; i < (*lunghezza_codice) ;i++){
+        codice[i]=rand() % (COLORI +1);
+        printf("posizione =|%d| valore casuale |%d|\n",i,codice[i]);
     }
-     */
+
+    printf("ho finito il for\n");
+
+    return codice;
 }
 
 void visualizza_regole(char nomefile[], giocatore *player) // da testare e coreggere
 {
-    int carattere;
+    int carattere,scelta;
+
     system("clear");
     player->tutorial = 0;
 
     FILE *fp;
     fp = fopen(nomefile, "r");
     if (fp == NULL) {
-        printf("errore apertura file \n");
+        printf("ERRORE NELL'APERTURA DEL FILE!\n");
         exit(1);
     }
 
@@ -299,18 +300,40 @@ void visualizza_regole(char nomefile[], giocatore *player) // da testare e coreg
 
     fclose(fp);
 
-    printf("\n\nPremi un tasto qualsiasi per tornare al menù:\n");
-    getchar();  //da modificare
-    system("clear");
+    printf("\n\nInserisci 0 per tornare  al menù:\n");
+    scanf("%d", &scelta);
+    while (scelta!=0) {
+        printf("Input non valido,riprova\n");
+        CLEAN_BUFFER;
+        scanf("%d", &scelta);
+    }
 }
 
-int menu()  //funziona ma da testare diversi tipi di input
+void dati_giocatore(giocatore *player){ //funziona
+    int scelta;
+
+    system("clear");
+    printf("Ecco i tuoi dati %s\n\n",player->id);
+    printf("Partite giocate= %d\n",player->partite_giocate);
+    printf("Partite vinte= %d\n",player->partite_vinte);
+    printf("Punti= %d\n",player->punti);
+
+    printf("\n\nInserisci 0 per tornare  al menù:\n");
+    scanf("%d", &scelta);
+    while (scelta!=0) {
+        printf("Input non valido,riprova\n");
+        CLEAN_BUFFER;
+        scanf("%d", &scelta);
+    }
+
+}
+int menu()  //funziona
 {
     int scelta;
     printf("****** BENVENUTO IN MASTERMIND ******\n\n");
     printf("[1] INIZIA UNA NUOVA PARTITA\n");
     printf("[2] REGOLE DEL GIOCO\n");
-    printf("[3] STORICO DEL GIOCATORE\n");
+    printf("[3] DATI DEL GIOCATORE\n");
     printf("[0] ESCI DAL GIOCO\n");
     printf("\nScelta: ");
 
@@ -382,18 +405,20 @@ int main() {
                 if (settings == 2) {
                     visualizza_regole("regole.txt", player);
                 }
-                /*
+
                  if (settings == 1) {
-                    genera_codice(codice, &lunghezza_codice);
+                    codice=genera_codice(codice, &lunghezza_codice);
+                    //printf("sono tornato da genera codice, il codice risultante è:\n");
+                    printf("lunghezza codice=|%d|\n",lunghezza_codice);
+                     printf("codice=");
+                     for(int i=0; i < (lunghezza_codice) ;i++){
+                         printf("|%d|",codice[i]);
+                     }
+                     printf("\n");
                     // funzione di gioco
                 }
 
 
-                printf("lungheza del codice= %d\n difficoltà= %d\n", lunghezza_codice, difficolta);
-                CLEAN_BUFFER;
-                getchar();
-                CLEAN_BUFFER;
-                */
                 break;
 
             case 2:
@@ -404,7 +429,7 @@ int main() {
 
             case 3:
                 CLEAN_BUFFER;
-                // storico del giocatore
+                dati_giocatore(player);
                 break;
 
             default:
