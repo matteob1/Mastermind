@@ -90,25 +90,19 @@ void verifica_id(char nomefile[], char id_inserito[], giocatore *player, char in
 
 
     FILE *fp = fopen(nomefile, "r");
-    printf("ho aperto il file\n");
+
 
     if (fp == NULL) {
         printf("ERRORE NELL'APERTURA DEL FILE!\n");
         exit(1);
     }
-    int res = 0;
 
     while (fscanf(fp, "%[^\n]", id_letto) != EOF) { //finchè non è alla fine del file legge fino alla fine della riga considerando gli spazi
         fgetc(fp); //consuma il carattere \n che fa andare il puntatore a capo
-        printf("id letto= |%s| \n", id_letto);
         if (insensitive_compare(id_letto, id_inserito) == 1) {
             printf("Id trovato!\nCaricamento dei dati in memoria...\n");
             strcpy(player->id, id_letto);
-            printf("player->id= %s\n", player->id);
             fscanf(fp, "%d %d %d %d", &player->partite_giocate, &player->partite_vinte, &player->punti,&player->tutorial);
-            //printf("dati salvati:\n giocate= |%d|\n vinte=|%d|\n punti=|%d|\n tutorial=|%d|\n",
-            // player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
-
             printf("Caricamento terminato!\n");
             fclose(fp);
             return;
@@ -127,7 +121,6 @@ void verifica_id(char nomefile[], char id_inserito[], giocatore *player, char in
         CLEAN_BUFFER;
         scanf("%1[^\n]", input);
     }
-    //printf("input= |%s|", input);
 
     if (*input == 'y' || *input == 'Y') {
         fp = fopen(nomefile, "a");
@@ -158,14 +151,13 @@ void verifica_id(char nomefile[], char id_inserito[], giocatore *player, char in
 
 int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player, char input[], char nomefile[]) //FUNZIONA
 {
-    char facile []="FACILE";
-    char intermedia []="INTERMEDIA";
-    char difficile []="DIFFICILE";
+    char facile[] = "FACILE";
+    char intermedia[] = "INTERMEDIA";
+    char difficile[] = "DIFFICILE";
 
-    system("clear");
 
     if (player->tutorial == 1) {
-        printf("player->tutorial |%d|\n",player->tutorial);
+        printf("player->tutorial |%d|\n", player->tutorial);
         printf("Non hai mai visto le regole, vuoi vederle?\n y/n\n");
         CLEAN_BUFFER;
 
@@ -176,13 +168,10 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player, 
             CLEAN_BUFFER;
             scanf("%1[^\n]", input);
         }
-        printf("input= |%s|", input);
-
-
     }
 
     if (*input == 'y' || *input == 'Y') {
-        player->tutorial=0;
+        player->tutorial = 0;
         CLEAN_BUFFER; // ancora player.tutorial vale 1 dovrà essere portato a 0 dalla funzione per vedere le regole
         return 2;
     }
@@ -190,100 +179,82 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player, 
     printf("ok! procediamo...");
     player->tutorial = 0;
     FILE *fp;
-    fp=fopen(nomefile,"r+"); //r+ apre il file in lettura e scrittura senza cancellare i dati esistenti (il puntatore è all'inizio del file
+    fp = fopen(nomefile,"r+"); //r+ apre il file in lettura e scrittura senza cancellare i dati esistenti (il puntatore è all'inizio del file
 
     if (fp == NULL) {
         printf("ERRORE NELL'APERTURA DEL FILE!\n");
         exit(1);
     }
 
-    char id_letto [LUNGHEZZA_ID];
+    char id_letto[LUNGHEZZA_ID];
 
-    int pos =0;
+    int pos = 0;
     while (fscanf(fp, "%[^\n]", id_letto) != EOF) { //finchè non è alla fine del file legge fino alla fine della riga considerando gli spazi
         fgetc(fp); //consuma il carattere \n che fa andare il puntatore a capo
-        pos+=sizeof (id_letto);
-        printf("id letto= |%s| \n", id_letto);
+        pos += sizeof(id_letto);
         if (insensitive_compare(id_letto, player->id) == 1) {
-            printf("Id trovato!\nCaricamento dei dati in memoria...\n");
-            //printf("posizione del puntatore = |%ld| , seek_set= |%d|\n", ftell(fp), SEEK_SET);
-            getchar();
-            printf("pos = |%d|\n",pos);
-            fseek(fp,0,SEEK_CUR);
-            fprintf(fp, "%d %d %d %d", player->partite_giocate, player->partite_vinte, player->punti,player->tutorial);
-            printf("dati salvati:\n giocate= |%d|\n vinte=|%d|\n punti=|%d|\n tutorial=|%d|\n",player->partite_giocate,player->partite_vinte,player->punti,player->tutorial);
-            printf("Salvataggio terminato!\n");
+            fseek(fp, 0, SEEK_CUR);
+            fprintf(fp, "%d %d %d %d", player->partite_giocate, player->partite_vinte, player->punti, player->tutorial);
             fclose(fp);
-        } //questo while è stato testato e funziona
+        }
     }
 
-
-
+    system("clear");
     printf("Scegli la lunghezza del codice segreto. (8-6-4)\n");
     scanf(" %1d", lunghezza_codice);
-    while (*lunghezza_codice != 4 && *lunghezza_codice != 6 && *lunghezza_codice != 8 ) {
+    while (*lunghezza_codice != 4 && *lunghezza_codice != 6 && *lunghezza_codice != 8) {
         printf("Input non valido,riprova\n");
         CLEAN_BUFFER;
         scanf(" %1d", lunghezza_codice);
     }
 
-    printf("\n\n Ora devi scegliere la difficoltà di gioco.\nFACILE = 10 TENTATIVI\nINTERMEDIA = 8 TENTATIVI\nDIFFICILE = 6 TENTATIVI\n");
+    system("clear");
+    printf("Scegli la difficoltà di gioco.\nFACILE = 10 TENTATIVI\nINTERMEDIA = 8 TENTATIVI\nDIFFICILE = 6 TENTATIVI\n");
     CLEAN_BUFFER;
 
 
-    scanf("%s",input);
-   while(insensitive_compare(input,facile) !=1 && insensitive_compare(input,intermedia) != 1
-                                                            && insensitive_compare(input,difficile) != 1){
-       printf("Input non valido,riprova\n");
-       CLEAN_BUFFER;
-       scanf("%s",input);
-   }
+    scanf("%s", input);
+    while (insensitive_compare(input, facile) != 1 && insensitive_compare(input, intermedia) != 1
+           && insensitive_compare(input, difficile) != 1) {
+        printf("Input non valido,riprova\n");
+        CLEAN_BUFFER;
+        scanf("%s", input);
+    }
 
 
     if (insensitive_compare(facile, input) == 1) {
         *difficolta = FACILE;
-        printf("difficoltà settata |%d|\n",*difficolta);
         return 1;
     } else if (insensitive_compare(intermedia, input) == 1) {
         *difficolta = INTERMEDIA;
-        printf("difficoltà settata |%d|\n",*difficolta);
         return 1;
     } else if (insensitive_compare(difficile, input) == 1) {
         *difficolta = DIFFICILE;
-        printf("difficoltà settata |%d|\n",*difficolta);
         return 1;
     }
     return 0;
 }
 
-int * genera_codice(int *codice, int *lunghezza_codice) //Funziona
+int *genera_codice(int *codice, int *lunghezza_codice) //Funziona
 {
-
     if (codice == NULL) // se l'array codice non è stato inizializzato (quindi se è la prima partita della sessione)
     {
         printf("sto per allocare memoria al codice poichè è nullo\n");
-        codice = (int *) malloc(sizeof(int)*(*lunghezza_codice));
+        codice = (int *) malloc(sizeof(int) * (*lunghezza_codice));
         printf("fatto\n");// alloc
         // a memoria all'array in base alla lunghezza scelta dall'utente
     }
 
     srand(time(NULL)); // inizializzo generatore di n umeri casuali con tempo nullo per garantire valori diversi ad ogni esecuzione
-    printf("inizializzato srand\n");
-    for(int i=0; i < (*lunghezza_codice) ;i++){
-        codice[i]=rand() % (COLORI +1);
-        printf("posizione =|%d| valore casuale |%d|\n",i,codice[i]);
+    for (int i = 0; i < (*lunghezza_codice); i++) {
+        codice[i] = rand() % (COLORI + 1);
     }
-
-    printf("ho finito il for\n");
-
     return codice;
 }
 
 void visualizza_regole(char nomefile[], giocatore *player) // da testare e coreggere
 {
-    int carattere,scelta;
-
-    system("clear");
+    int carattere, scelta;
     player->tutorial = 0;
 
     FILE *fp;
@@ -302,31 +273,32 @@ void visualizza_regole(char nomefile[], giocatore *player) // da testare e coreg
 
     printf("\n\nInserisci 0 per tornare  al menù:\n");
     scanf("%d", &scelta);
-    while (scelta!=0) {
+    while (scelta != 0) {
         printf("Input non valido,riprova\n");
         CLEAN_BUFFER;
         scanf("%d", &scelta);
     }
 }
 
-void dati_giocatore(giocatore *player){ //funziona
+void dati_giocatore(giocatore *player) { //funziona
     int scelta;
 
     system("clear");
-    printf("Ecco i tuoi dati %s\n\n",player->id);
-    printf("Partite giocate= %d\n",player->partite_giocate);
-    printf("Partite vinte= %d\n",player->partite_vinte);
-    printf("Punti= %d\n",player->punti);
+    printf("Ecco i tuoi dati %s\n\n", player->id);
+    printf("Partite giocate= %d\n", player->partite_giocate);
+    printf("Partite vinte= %d\n", player->partite_vinte);
+    printf("Punti= %d\n", player->punti);
 
     printf("\n\nInserisci 0 per tornare  al menù:\n");
     scanf("%d", &scelta);
-    while (scelta!=0) {
+    while (scelta != 0) {
         printf("Input non valido,riprova\n");
         CLEAN_BUFFER;
         scanf("%d", &scelta);
     }
 
 }
+
 int menu()  //funziona
 {
     int scelta;
@@ -361,30 +333,24 @@ int main() {
 
     printf("****** BENVENUTO IN MASTERMIND ******\n INSERISCI IL TUO ID UTENTE:\n");
 
-    fgets(input, sizeof (input), stdin);
-    printf("ho letto\n");
+    fgets(input, sizeof(input), stdin);
     while (input[0] == '\n' || strlen(input) > LUNGHEZZA_ID || input[0] == ESC) {
         printf("input non valido, riprova\n");
         fgets(input, sizeof(input), stdin);
     }
-    printf("sono dopo il while\n");
 
     input[strcspn(input, "\n")] = '\0'; // Rimuove il newline finale, se presente
-    printf("ho rimosso il new line\n");
     strcpy(id_utente, input);
-    printf("ho copiato id utente da buffer\n");
 
-    /* la funzione strcspn scansiona
-   la stringa passata nel primo parametro fino a quando non trova corrispondenza con almeno uno dei caratteri contenuti nella stringa passata
-   come secondo parametro ("\n"). Ha come valore di ritorno il contatore di posizioni analizzate a partire da zero.
-   Quindi abbiamo preso l'elemento dell'array "id_utente" nella posizione del carattere \n (se presente) e lo sostituiamo con il carattere nullo*/
+    /*
+    la funzione strcspn scansiona
+    la stringa passata nel primo parametro fino a quando non trova corrispondenza con almeno uno dei caratteri contenuti nella stringa passata
+    come secondo parametro ("\n"). Ha come valore di ritorno il contatore di posizioni analizzate a partire da zero.
+    Quindi abbiamo preso l'elemento dell'array "id_utente" nella posizione del carattere \n (se presente) e lo sostituiamo con il carattere nullo
+    */
 
-
-    printf("sto per entrare in verifica id\n");
     verifica_id("data.txt", id_utente, player, input);
-    printf("sono uscito da verifica id\n");
-    getchar();
-    CLEAN_BUFFER;
+
 
     while (1) {
         system("clear");
@@ -398,23 +364,15 @@ int main() {
                 break;
 
             case 1:
+                system("clear");
                 settings = settings_partita(&lunghezza_codice, &difficolta, player, input, "data.txt");
-                printf("Il risultato di settings_partita è |%d|\n",settings);
-                getchar();
 
                 if (settings == 2) {
                     visualizza_regole("regole.txt", player);
                 }
 
-                 if (settings == 1) {
-                    codice=genera_codice(codice, &lunghezza_codice);
-                    //printf("sono tornato da genera codice, il codice risultante è:\n");
-                    printf("lunghezza codice=|%d|\n",lunghezza_codice);
-                     printf("codice=");
-                     for(int i=0; i < (lunghezza_codice) ;i++){
-                         printf("|%d|",codice[i]);
-                     }
-                     printf("\n");
+                if (settings == 1) {
+                    codice = genera_codice(codice, &lunghezza_codice);
                     // funzione di gioco
                 }
 
@@ -422,13 +380,12 @@ int main() {
                 break;
 
             case 2:
-                CLEAN_BUFFER;
                 system("clear");
                 visualizza_regole("regole.txt", player);
                 break;
 
             case 3:
-                CLEAN_BUFFER;
+                system("clear");
                 dati_giocatore(player);
                 break;
 
