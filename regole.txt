@@ -4,7 +4,6 @@ Mastermind è un gioco di decodifica in cui un giocatore (il codificatore) crea 
 e l'altro giocatore (il decodificatore) cerca di indovinarlo entro un certo numero di tentativi.
 
 1. Il codificatore crea un codice segreto di lunghezza fissa, composto da una sequenza di elementi.
-Gli elementi possono essere colori, lettere o numeri e possono ripetersi.
 
 2. Il decodificatore fa una serie di tentativi per cercare di indovinare il codice segreto.
 Ogni tentativo è una sequenza della stessa lunghezza del codice segreto.

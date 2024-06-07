@@ -60,6 +60,28 @@ typedef struct Sgiocatore {
 } giocatore;
 
 
+void game(giocatore *player, int *codice, char input[], char nomefile[], int *difficolta, int *lunghezza_codice){
+
+    //matrice
+    // Allocazione memoria alla matrice
+    int **matrix = (int**) malloc((*difficolta) * sizeof(int*)); //allocazione righe
+    for (int i = 0; i < (*difficolta); i++) {
+        matrix[i] = (int*) malloc((*lunghezza_codice) * sizeof(int)); //allocazione delle collone per riga
+    }
+
+    // Inizializzo la matrice e la stampo
+    for (int row = 0; row < (*difficolta); row++) { //scorro le righe
+        for (int col = 0; col < (*lunghezza_codice); col++) { //scorro le colonne
+            matrix[row][col] = 0;
+            printf("|%d|", matrix[row][col]);
+        }
+        printf("\n");
+    }
+
+
+}
+
+
 int insensitive_compare(char stringa1[], char stringa2[]) //funziona
 {
     int status = 0;
@@ -326,7 +348,7 @@ int main() {
 
     giocatore *player = (giocatore *) malloc(sizeof(giocatore));
 
-    int difficolta, lunghezza_codice, input_utente, settings;
+    int difficolta, lunghezza_codice, scelta_menu, settings;
     char id_utente[LUNGHEZZA_ID];
     char input[ROW];
     int *codice;
@@ -354,9 +376,9 @@ int main() {
 
     while (1) {
         system("clear");
-        input_utente = menu();
+        scelta_menu = menu();
 
-        switch (input_utente) {
+        switch (scelta_menu) {
             case 0:
                 system("clear");
                 free(player);
@@ -373,7 +395,7 @@ int main() {
 
                 if (settings == 1) {
                     codice = genera_codice(codice, &lunghezza_codice);
-                    // funzione di gioco
+                    game(player,codice,input,"data.txt",&difficolta,&lunghezza_codice);
                 }
 
 
