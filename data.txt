@@ -19,3 +19,9 @@ matteo b
 gioco
 0 0 0 0
 .
+patrick
+0 0 0 0
+.
+patrick2
+0 0 0 1
+.

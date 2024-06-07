@@ -78,7 +78,6 @@ void game(giocatore *player, int *codice, char input[], char nomefile[], int *di
         printf("\n");
     }
 
-
 }
 
 
@@ -261,9 +260,7 @@ int *genera_codice(int *codice, int *lunghezza_codice) //Funziona
 {
     if (codice == NULL) // se l'array codice non è stato inizializzato (quindi se è la prima partita della sessione)
     {
-        printf("sto per allocare memoria al codice poichè è nullo\n");
         codice = (int *) malloc(sizeof(int) * (*lunghezza_codice));
-        printf("fatto\n");// alloc
         // a memoria all'array in base alla lunghezza scelta dall'utente
     }
 
@@ -323,7 +320,7 @@ void dati_giocatore(giocatore *player) { //funziona
 
 int menu()  //funziona
 {
-    int scelta;
+    int scelta=5;
     printf("****** BENVENUTO IN MASTERMIND ******\n\n");
     printf("[1] INIZIA UNA NUOVA PARTITA\n");
     printf("[2] REGOLE DEL GIOCO\n");
@@ -331,13 +328,14 @@ int menu()  //funziona
     printf("[0] ESCI DAL GIOCO\n");
     printf("\nScelta: ");
 
-    scanf("%d", &scelta);
 
-    while (scelta < 0 || scelta > 3) {
+    scanf("%1d",&scelta);
+    while (scelta < 0 || scelta > 3)
+    {
         printf("SCELTA NON VALIDA RIPROVARE!\n");
         printf("\nScelta: ");
-        getchar();
-        scanf("%d", &scelta);
+        CLEAN_BUFFER;
+        scanf("%1d", &scelta);
     }
 
     return scelta;
@@ -363,7 +361,6 @@ int main() {
 
     input[strcspn(input, "\n")] = '\0'; // Rimuove il newline finale, se presente
     strcpy(id_utente, input);
-
     /*
     la funzione strcspn scansiona
     la stringa passata nel primo parametro fino a quando non trova corrispondenza con almeno uno dei caratteri contenuti nella stringa passata
@@ -376,8 +373,8 @@ int main() {
 
     while (1) {
         system("clear");
-        scelta_menu = menu();
 
+        scelta_menu = menu();
         switch (scelta_menu) {
             case 0:
                 system("clear");
