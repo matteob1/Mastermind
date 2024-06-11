@@ -35,21 +35,25 @@
 #define DIFFICILE 6
 
 #define LUNGHEZZA_ID 11
-#define COLORI 8
+#define COLORI 5
 #define ESC 27
 #define ROW 256
-#define CLEAN_BUFFER  while ((getchar()) != '\n')
+#define CLEAN_BUFFER  do { int ch; while ( (ch = getchar()) != EOF && ch != '\n' ) {} } while (0)
 
-/*
-#define ROSSO 1
-#define VERDE 2
-#define BLU 3
-#define GIALLO 4
-#define MARRONE 5
-#define ARANCIONE 6
-#define NERO 7
-#define BIANCO 8
-*/
+
+#define RED "\e[0;31m"
+#define GREEN "\e[0;32m"
+#define YELLOW "\e[0;33m"
+#define BLUE "\e[0;34m"
+#define COLOR_RESET "\e[0m"
+
+
+#define ROSSO_VAL 1
+#define VERDE_VAL 2
+#define BLU_VAL 3
+#define GIALLO_VAL 4
+#define BIANCO_VAL 5
+
 
 typedef struct Sgiocatore {
     char id[LUNGHEZZA_ID];
@@ -60,25 +64,7 @@ typedef struct Sgiocatore {
 } giocatore;
 
 
-void game(giocatore *player, int *codice, char input[], char nomefile[], int *difficolta, int *lunghezza_codice){
 
-    //matrice
-    // Allocazione memoria alla matrice
-    int **matrix = (int**) malloc((*difficolta) * sizeof(int*)); //allocazione righe
-    for (int i = 0; i < (*difficolta); i++) {
-        matrix[i] = (int*) malloc((*lunghezza_codice) * sizeof(int)); //allocazione delle collone per riga
-    }
-
-    // Inizializzo la matrice e la stampo
-    for (int row = 0; row < (*difficolta); row++) { //scorro le righe
-        for (int col = 0; col < (*lunghezza_codice); col++) { //scorro le colonne
-            matrix[row][col] = 0;
-            printf("|%d|", matrix[row][col]);
-        }
-        printf("\n");
-    }
-
-}
 
 
 int insensitive_compare(char stringa1[], char stringa2[]) //funziona
@@ -309,14 +295,135 @@ void dati_giocatore(giocatore *player) { //funziona
     printf("Punti= %d\n", player->punti);
 
     printf("\n\nInserisci 0 per tornare  al menù:\n");
-    scanf("%d", &scelta);
+    scanf("%1d", &scelta);
     while (scelta != 0) {
         printf("Input non valido,riprova\n");
         CLEAN_BUFFER;
-        scanf("%d", &scelta);
+        scanf("%1 d", &scelta);
     }
 
 }
+
+
+
+// lasciare solo 4 colori e togliere la possiilità di scegliere la lunghezza del codice (da settings partita)
+// oppure non colorare il terminale e stampare parola e basta
+
+void render_matrice(int ** matrix, int row, int col) //funziona
+{
+    for (int i = 0; i < (row); i++) { //scorro le righe
+        for (int j = 0; j < (col); j++) { //scorro le colonne
+           switch(matrix[i][j]){
+               case 0:
+                   printf("|0| ");
+                   break;
+               case ROSSO_VAL:
+                   printf(RED "|ROSSO| " COLOR_RESET);
+                   break;
+               case VERDE_VAL:
+                   printf(GREEN "|VERDE| " COLOR_RESET);
+                   break;
+               case BLU_VAL:
+                   printf(BLUE "|BLU| " COLOR_RESET);
+                   break;
+               case GIALLO_VAL:
+                   printf(YELLOW "|GIALLO| " COLOR_RESET);
+                   break;
+               case BIANCO_VAL:
+                   printf("|BIANCO| ");
+                   break;
+               default:
+                   printf("Valore sconosciuto\n");
+                   exit(1);
+                 break;
+           }
+        }
+        printf("\n");
+    }
+}
+
+
+
+void game(giocatore *player, int *codice, char input[], char nomefile[], int *difficolta, int *lunghezza_codice){  //non funziona come dovrebbe
+
+    player->partite_giocate++;
+    int *input_codice = (int*) malloc((*lunghezza_codice) * sizeof(int));
+    int tentativo=0;
+    int elementi_tentativo=0;
+
+    char rosso[] = "ROSSO";
+    char verde[] = "VERDE";
+    char blu[] = "BLU";
+    char giallo[] = "GIALLO";
+    char bianco[] = "BIANCO";
+
+    //matrice
+    // Allocazione memoria alla matrice
+    int **matrix = (int**) malloc((*difficolta) * sizeof(int*)); //allocazione righe
+    for (int i = 0; i < (*difficolta); i++) {
+        matrix[i] = (int*) malloc((*lunghezza_codice) * sizeof(int)); //allocazione delle collone per riga
+    }
+
+    //srand(time(NULL));
+    // Inizializzo la matrice
+    for (int row = 0; row < (*difficolta); row++) { //scorro le righe
+        for (int col = 0; col < (*lunghezza_codice); col++) { //scorro le colonne
+            matrix[row][col] = 0;
+            //printf("|%d|",matrix[row][col]);
+        }
+        //printf("\n");
+    }
+
+
+    while(tentativo<(*difficolta)){
+        system("clear");
+        //printf("Inserisci 0 per uscire\n");
+        render_matrice(matrix,*difficolta,*lunghezza_codice);
+
+        printf("\n\n Prova ad indovinare il codice! Inserisci i colori uno alla volta.\n");
+        scanf("%s",input);
+        while(elementi_tentativo<(*lunghezza_codice)){
+
+
+            while(insensitive_compare(input,rosso)!=1 && insensitive_compare(input,verde)!=1
+                  && insensitive_compare(input,blu)!=1 && insensitive_compare(input,giallo)!=1
+                  && insensitive_compare(input,bianco)!=1)
+            {
+                printf("Input non valido,riprova\n");
+                CLEAN_BUFFER;
+                scanf("%s",input);
+            }
+            if(insensitive_compare(input,rosso)==1){
+                input_codice[elementi_tentativo]=ROSSO_VAL;
+            }
+            else if(insensitive_compare(input,verde)==1){
+                input_codice[elementi_tentativo]=VERDE_VAL;
+            }
+            else if(insensitive_compare(input,blu)==1){
+                input_codice[elementi_tentativo]=BLU_VAL;
+            }
+            else if(insensitive_compare(input,giallo)==1){
+                input_codice[elementi_tentativo]=GIALLO_VAL;
+            }
+            else if(insensitive_compare(input,bianco)==1){
+                input_codice[elementi_tentativo]=BIANCO_VAL;
+            }
+            elementi_tentativo++;
+        }
+
+        //scorro le righe
+            for (int col = 0; col < (*lunghezza_codice); col++) { //scorro le colonne
+                matrix[((*difficolta)-1) - tentativo][col] = input_codice[col];
+            }
+        CLEAN_BUFFER;
+        tentativo++;
+    }
+    //render_matrice(matrix,*difficolta,*lunghezza_codice);
+}
+
+
+
+
 
 int menu()  //funziona
 {
