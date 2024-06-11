@@ -33,11 +33,14 @@
 #define FACILE 10
 #define INTERMEDIA 8
 #define DIFFICILE 6
+#define VITTORIA 10
 
 #define LUNGHEZZA_ID 11
 #define COLORI 5
 #define ESC 27
 #define ROW 256
+
+
 #define CLEAN_BUFFER  do { int ch; while ( (ch = getchar()) != EOF && ch != '\n' ) {} } while (0)
 #define CLEAN_SCREEN system("clear")
 
@@ -132,8 +135,7 @@ void verifica_id(char nomefile[], char id_inserito[], giocatore *player, char in
         if (insensitive_compare(id_letto, id_inserito) == 1) {
             printf("Id trovato!\nCaricamento dei dati in memoria...\n");
             strcpy(player->id, id_letto);
-            fscanf(fp, "%d %d %d %d", &player->partite_giocate, &player->partite_vinte, &player->punti,
-                   &player->tutorial);
+            fscanf(fp, "%d %d %d %d", &player->partite_giocate, &player->partite_vinte, &player->punti,&player->tutorial);
             printf("Caricamento terminato!\n");
             fclose(fp);
             return;
@@ -188,14 +190,13 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player, 
 
 
     if (player->tutorial == 1) {
-        printf("player->tutorial |%d|\n", player->tutorial);
-        printf("Non hai mai visto le regole, vuoi vederle?\n y/n\n");
+        printf("Non hai mai visto le regole, vuoi vederle?\n\n y/n\n\n");
         CLEAN_BUFFER;
 
         scanf("%1[^\n]", input);
         while (*input != 'y' && *input != 'n' && *input != 'Y' && *input != 'N') {
             //printf("input= |%s|\n",input);
-            printf("Input non valido,riprova\n");
+            printf("Input non valido,riprova\n\n");
             CLEAN_BUFFER;
             scanf("%1[^\n]", input);
         }
@@ -207,28 +208,28 @@ int settings_partita(int *lunghezza_codice, int *difficolta, giocatore *player, 
         return 2;
     }
 
-    printf("ok! procediamo...");
+    printf("ok! procediamo...\n");
     player->tutorial = 0;
     salvataggio_dati("data.txt",player);
 
     CLEAN_SCREEN;
-    printf("Scegli la lunghezza del codice segreto. (8-6-4)\n");
+    printf("Scegli la lunghezza del codice segreto. (8-6-4)\n\n\n");
     scanf(" %1d", lunghezza_codice);
     while (*lunghezza_codice != 4 && *lunghezza_codice != 6 && *lunghezza_codice != 8) {
-        printf("Input non valido,riprova\n");
+        printf("Input non valido,riprova\n\n");
         CLEAN_BUFFER;
         scanf(" %1d", lunghezza_codice);
     }
 
     CLEAN_SCREEN;
-    printf("Scegli la difficoltà di gioco.\nFACILE = 10 TENTATIVI\nINTERMEDIA = 8 TENTATIVI\nDIFFICILE = 6 TENTATIVI\n");
+    printf("Scegli la difficoltà di gioco.\n\n\nFACILE = 10 TENTATIVI\nINTERMEDIA = 8 TENTATIVI\nDIFFICILE = 6 TENTATIVI\n\n");
     CLEAN_BUFFER;
 
 
     scanf("%s", input);
     while (insensitive_compare(input, facile) != 1 && insensitive_compare(input, intermedia) != 1
            && insensitive_compare(input, difficile) != 1) {
-        printf("Input non valido,riprova\n");
+        printf("Input non valido,riprova\n\n");
         CLEAN_BUFFER;
         scanf("%s", input);
     }
@@ -310,11 +311,6 @@ void dati_giocatore(giocatore *player) { //funziona
 
 }
 
-
-
-// lasciare solo 4 colori e togliere la possiilità di scegliere la lunghezza del codice (da settings partita)
-// oppure non colorare il terminale e stampare parola e basta
-
 void render_matrice(int **matrix, int row, int col) //funziona
 {
     for (int i = 0; i < (row); i++) { //scorro le righe
@@ -380,17 +376,19 @@ void game(giocatore *player, int *codice, char input[], char nomefile[], int *di
     int tentativo = 0;
     int elementi_tentativo;
     int punteggi_verdi; //indicano quanti elementi del tentativo sono corretti sia per valore che per posizione.
-    int punteggi_bianchi; //indicano quanti elementi del tentativo sono corretti per valore ma non per posizione.
+    int punteggi_neri; //indicano quanti elementi del tentativo sono corretti per valore ma non per posizione.
 
     int *matched_codice = (int *) malloc((*lunghezza_codice) * sizeof(int));
     int *matched_input = (int *) malloc((*lunghezza_codice) * sizeof(int));
 
 
-    char rosso[] = "ROSSO";
-    char verde[] = "VERDE";
-    char blu[] = "BLU";
-    char giallo[] = "GIALLO";
-    char bianco[] = "BIANCO";
+    char rosso[] = "rosso";
+    char verde[] = "verde";
+    char blu[] = "blu";
+    char giallo[] = "giallo";
+    char bianco[] = "bianco";
+
+
 
     //matrice
     // Allocazione memoria alla matrice
@@ -404,7 +402,6 @@ void game(giocatore *player, int *codice, char input[], char nomefile[], int *di
     for (int row = 0; row < (*difficolta); row++) { //scorro le righe
         for (int col = 0; col < (*lunghezza_codice); col++) { //scorro le colonne
             matrix[row][col] = 0;
-
         }
 
     }
@@ -413,10 +410,18 @@ void game(giocatore *player, int *codice, char input[], char nomefile[], int *di
     while (tentativo < (*difficolta)) {
         CLEAN_SCREEN;
         printf("Inserisci i colori UNO ALLA VOLTA:\n\n");
+        printf(" %s, %s, %s, %s, %s\n",rosso,verde,blu,giallo,bianco);
+        printf("\n\n");
         render_matrice(matrix, (*difficolta), (*lunghezza_codice));
+        printf("\n\n");
+        printf(GREEN "PUNTEGGI VERDI: %d\n", punteggi_verdi);
+        printf(COLOR_RESET);
+        printf("PUNTEGGI NERI: %d\n", punteggi_neri);
+        printf("\n\n");
+
         elementi_tentativo = 0;
         punteggi_verdi = 0;
-        punteggi_bianchi = 0;
+        punteggi_neri = 0;
 
         // Inizializzo matched_codice e matched_input a 0
         for (int i = 0; i < *lunghezza_codice; i++) {
@@ -461,7 +466,7 @@ void game(giocatore *player, int *codice, char input[], char nomefile[], int *di
             if (!matched_codice[i]) {
                 for (int j = 0; j < *lunghezza_codice; j++) {
                     if (!matched_input[j] && codice[i] == input_codice[j]) {
-                        punteggi_bianchi++;
+                        punteggi_neri++;
                         matched_input[j] = 1;
                         break;
                     }
@@ -469,24 +474,27 @@ void game(giocatore *player, int *codice, char input[], char nomefile[], int *di
             }
         }
 
-        CLEAN_SCREEN;
+
         render_matrice(matrix, (*difficolta), (*lunghezza_codice));
+        printf("\n\n");
 
-        printf("I punteggi verdi di questo tentativo sono: %d\n", punteggi_verdi);
-        printf("I punteggi bianchi di questo tentativo sono: %d\n", punteggi_bianchi);
 
-        if (punteggi_verdi==(*lunghezza_codice) && punteggi_bianchi == 0) {
+
+        if (punteggi_verdi==(*lunghezza_codice) && punteggi_neri == 0) {
             CLEAN_SCREEN;
             printf("Congratulazioni hai vinto!!\n");
             printf("Codice da te inserito:  ");
             render_codice(input_codice,lunghezza_codice);
-            printf("\n");
+            printf("\n\n");
 
             printf("Codice segreto:");
             render_codice(codice,lunghezza_codice);
-            printf("\n");
+            printf("\n\n");
             player->partite_vinte++;
+            player->punti+= VITTORIA;
             salvataggio_dati("data.txt",player);
+            CLEAN_BUFFER;
+            getchar();
             return;
         }
 
@@ -498,7 +506,9 @@ void game(giocatore *player, int *codice, char input[], char nomefile[], int *di
     }
     render_matrice(matrix, (*difficolta), (*lunghezza_codice));
     printf("********** Game Over **********\n");
+    printf("\n\n");
     salvataggio_dati("data.txt",player);
+    CLEAN_BUFFER;
     getchar();
 }
 
@@ -535,7 +545,7 @@ int main() {
     char input[ROW];
     int *codice;
 
-    printf("****** BENVENUTO IN MASTERMIND ******\n INSERISCI IL TUO ID UTENTE:\n");
+    printf("****** BENVENUTO IN MASTERMIND ******\n\n\nINSERISCI IL TUO ID UTENTE:\n\n");
 
     fgets(input, sizeof(input), stdin);
     while (input[0] == '\n' || strlen(input) > LUNGHEZZA_ID || input[0] == ESC) {

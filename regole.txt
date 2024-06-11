@@ -9,8 +9,8 @@ e l'altro giocatore (il decodificatore) cerca di indovinarlo entro un certo nume
 Ogni tentativo è una sequenza della stessa lunghezza del codice segreto.
 
 3. Dopo ogni tentativo, il codificatore fornisce un feedback sotto forma di due numeri:
- - Punteggi verdi: indicano quanti elementi del tentativo sono corretti sia per valore che per posizione.
- - Punteggi bianchi: indicano quanti elementi del tentativo sono corretti per valore ma non per posizione.
+ - Punteggi VERDI: indicano quanti elementi del tentativo sono corretti sia per valore che per posizione.
+ - Punteggi NERI: indicano quanti elementi del tentativo sono corretti per valore ma non per posizione.
 
 4. Il gioco continua finché il decodificatore non indovina esattamente il codice segreto o finché non esaurisce
 i tentativi a disposizione.
